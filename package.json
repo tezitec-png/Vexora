@@ -1,0 +1,24 @@
+{
+  "name": "vexorium",
+  "version": "2.3.2.60",
+  "private": false,
+  "description": "Vexora \u00b7 app + API de build en servidor + panel admin \u00b7 proyecto vexorium \u2192 vexorium.pages.dev",
+  "scripts": {
+    "build": "node build-protect.js",
+    "dev": "node build-protect.js && wrangler pages dev protected --port 8788 --d1 DB --binding ADMIN_PASSWORD=change-me",
+    "deploy": "node build-protect.js && wrangler deploy",
+    "deploy:pages": "node build-protect.js && wrangler pages deploy protected --project-name=vexorium",
+    "check": "wrangler deploy --dry-run",
+    "test:e2e": "node test/e2e-210.js"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^5.7.0",
+    "terser": "^5.51.2",
+    "wrangler": "^4.86.0"
+  },
+  "dependencies": {
+    "jsdom": "^29.1.1",
+    "jszip": "^3.10.2"
+  },
+  "license": "MIT"
+}

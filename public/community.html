@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noindex" />
+<title>Vexora Community</title>
+<link rel="stylesheet" href="/assets/app.css?v=1670" />
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+<style>
+  
+  :root { --text: #3ddc84; --muted: #8fe9bd; --line: rgba(61,220,132,.16); --line-2: rgba(61,220,132,.34); }
+  
+  [hidden] { display: none !important; } 
+  .c-app { max-width: 520px; margin: 0 auto; padding: 0 0 calc(70px + env(safe-area-inset-bottom)); }
+  .c-top {
+    position: fixed; left: 0; right: 0; top: 0; z-index: 20;
+    max-width: 520px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    padding: 10px 12px; padding-top: calc(10px + env(safe-area-inset-top));
+    background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,0));
+    pointer-events: none;
+  }
+  .c-top > * { pointer-events: auto; }
+  .c-bell { position: absolute; right: 10px; top: calc(8px + env(safe-area-inset-top)); }
+  .c-tabs { display: flex; gap: 4px; }
+  .c-tabs button {
+    background: transparent; border: 0; color: var(--muted);
+    font: 700 13.5px/1 var(--sans); padding: 8px 10px; border-radius: 999px; cursor: pointer;
+  }
+  .c-tabs button.is-on { color: var(--text); text-decoration: underline; text-underline-offset: 6px; }
+  .c-top a.btn { min-height: 32px; padding: 5px 10px; font-size: 11px; white-space: nowrap; }
+  .c-bell {
+    background: transparent; border: 0; color: var(--text);
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .c-bell svg { width: 20px; height: 20px; }
+  .c-bell:hover { background: var(--panel-2); }
+  .c-nbadge {
+    position: absolute; top: -2px; right: -3px; min-width: 16px; height: 16px;
+    border-radius: 8px; background: var(--danger); color: #fff;
+    font: 700 10px/16px var(--sans); text-align: center; padding: 0 4px;
+  }
+  .c-views { cursor: default; opacity: .95; }
+  .c-nitem {
+    display: flex; align-items: flex-start; gap: 10px; width: 100%;
+    background: transparent; border: 0; border-bottom: 1px solid var(--line);
+    color: var(--text); font: 400 13px/1.45 var(--sans); text-align: left;
+    padding: 10px 4px; cursor: pointer;
+  }
+  .c-nitem:last-child { border-bottom: 0; }
+  .c-nitem svg { width: 19px; height: 19px; min-width: 19px; margin-top: 1px; }
+  .c-nitem.is-like svg { color: #fe2c55; }
+  .c-nitem.is-follow svg { color: var(--ok); }
+  .c-nitem i { font-style: normal; color: var(--muted); font-size: 11px; }
+  .c-nitem.new { background: var(--panel-2); border-radius: 8px; }
+  .c-cmt { flex-wrap: wrap; }
+  .c-cmt.is-reply { margin-left: 26px; }
+  .c-re { font-style: normal; color: var(--text); font-weight: 700; font-size: 11px; white-space: nowrap; }
+  .c-cact {
+    background: transparent; border: 0; color: var(--muted);
+    font: 700 11px/1 var(--sans); padding: 2px 6px; border-radius: 6px; cursor: pointer;
+  }
+  .c-cact:hover { background: var(--panel-2); color: var(--text); }
+  .c-chint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 6px; }
+  .c-clike {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: transparent; border: 0; color: var(--muted); cursor: pointer;
+    font: 700 11px/1 var(--sans); padding: 2px 4px; border-radius: 6px;
+  }
+  .c-clike svg { width: 13px; height: 13px; }
+  .c-clike.is-on { color: #fe2c55; }
+  .c-clike.is-on svg path, .c-clike.is-on svg { fill: currentColor; }
+  .c-replybar {
+    display: flex; align-items: center; gap: 8px; background: var(--panel-2);
+    border: 1px solid var(--line-2); border-radius: var(--r-sm);
+    padding: 6px 10px; margin-top: 8px; font-size: 12px; color: var(--muted);
+  }
+  .c-replybar b { color: var(--text); }
+  .c-replybar button { margin-left: auto; background: transparent; border: 0; color: var(--muted); font: 700 12px/1 var(--sans); cursor: pointer; padding: 2px 4px; }
+  .c-main { padding: 0; }
+  #cMeView, #cNewView { padding-top: calc(8px + env(safe-area-inset-top)); }
+  .c-note {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 10px 12px; margin: 10px 12px; font-size: 12.5px; color: var(--muted);
+  }
+  .c-note a { color: var(--text); font-weight: 700; white-space: nowrap; }
+  
+  .c-feed {
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto; overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+    -webkit-scroll-snap-type: y mandatory;
+    background: #000;
+  }
+  #cFeedList { height: 100%; } 
+  .c-slide {
+    position: relative; height: 100%; min-height: 420px;
+    scroll-snap-align: start; scroll-snap-stop: always;
+    overflow: hidden; background: #000;
+  }
+  .c-media { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+  .c-shade {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 42%;
+    background: linear-gradient(transparent, rgba(0,0,0,.74));
+    pointer-events: none;
+  }
+  .c-capov {
+    position: absolute; left: 12px; right: 78px; bottom: calc(112px + env(safe-area-inset-bottom)); z-index: 4;
+    color: #fff; font-size: 13.5px; line-height: 1.45; max-height: 32%; overflow: hidden;
+    text-shadow: 0 1px 4px rgba(0,0,0,.65); word-break: break-word; white-space: pre-wrap;
+  }
+  .c-capov b { display: block; margin-bottom: 3px; font-size: 14px; cursor: pointer; }
+  .c-capov i { font-style: normal; color: rgba(255,255,255,.78); font-size: 11.5px; margin-left: 6px; }
+  .c-right {
+    position: absolute; right: 8px; bottom: calc(66px + env(safe-area-inset-bottom)); z-index: 5;
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
+  }
+  .c-rbtn {
+    background: transparent; border: 0; color: #fff; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font: 700 11.5px/1 var(--sans); padding: 2px;
+    text-shadow: 0 1px 3px rgba(0,0,0,.55);
+  }
+  .c-rbtn svg { width: 30px; height: 30px; filter: drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+  .c-rbtn:disabled { opacity: .6; }
+  .c-rbtn, .c-clike, .c-tabs button, .c-follow, .c-folb2 { transition: transform .12s ease; }
+  .c-rbtn:active, .c-clike:active, .c-tabs button:active, .c-folb2:active { transform: scale(.86); }
+  .c-rbtn.pop svg, .c-clike.pop svg { animation: cPop .32s ease; }
+  .c-media { animation: cFade .25s ease; }
+  .c-rbtn.is-on { color: #fe2c55; } 
+  
+  .c-idrow { position: absolute; left: 12px; bottom: calc(66px + env(safe-area-inset-bottom)); z-index: 5; display: flex; align-items: center; gap: 9px; max-width: calc(100% - 86px); }
+  .c-idrow .c-av { width: 38px; height: 38px; min-width: 38px; font-size: 15px; border: 2px solid #fff; background: var(--panel-2); cursor: pointer; }
+  .c-idname { color: #fff; font-size: 14.5px; font-weight: 800; text-shadow: 0 1px 4px rgba(0,0,0,.65); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c-folb2 {
+    border: 1px solid #3ddc84; background: transparent; color: #3ddc84;
+    border-radius: 999px; padding: 6px 13px; font: 800 12px/1 var(--sans); cursor: pointer;
+    transition: background .15s ease, color .15s ease, transform .12s ease; white-space: nowrap; flex-shrink: 0;
+  }
+  .c-folb2.is-on { background: #3ddc84; color: #04120a; border-color: #3ddc84; }
+  .c-bigheart {
+    position: absolute; left: 50%; top: 44%; z-index: 6;
+    width: 110px; height: 110px; color: #fe2c55;
+    transform: translate(-50%, -50%) scale(.4); opacity: 0; pointer-events: none;
+  }
+  .c-bigheart.go { animation: cheart .8s ease forwards; }
+  @keyframes cheart {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+    18% { opacity: 1; transform: translate(-50%, -50%) scale(1.18); }
+    62% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -62%) scale(1.22); }
+  }
+  .c-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 10px; }
+  .c-empty.onblack { color: rgba(255,255,255,.75); }
+  
+  .c-nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    display: flex; justify-content: center; gap: 6px;
+    background: rgba(14,14,16,.95); backdrop-filter: blur(8px);
+    border-top: 1px solid var(--line);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  }
+  .c-nav button {
+    flex: 0 1 160px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: transparent; border: 0; color: var(--muted);
+    font: 700 11px/1.2 var(--sans); padding: 6px 8px; border-radius: 10px; cursor: pointer;
+  }
+  .c-nav button svg { width: 22px; height: 22px; }
+  .c-nav button.is-on { color: var(--text); }
+  .c-nav button.c-plus {
+    flex: 0 0 auto; width: 52px; height: 52px; margin: 0 8px; align-self: center;
+    background: var(--text); color: var(--fg); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .c-nav button.c-plus svg { width: 24px; height: 24px; }
+  
+  .c-new {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg);
+    padding: 14px; margin: 10px 12px;
+  }
+  .c-prev {
+    width: 100%; border-radius: var(--r); border: 1px dashed var(--line-2);
+    background: var(--sunken); min-height: 220px; display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 13px; text-align: center; padding: 12px; overflow: hidden;
+  }
+  .c-prev img { max-width: 100%; max-height: 420px; border-radius: var(--r); display: block; }
+  .c-new textarea, .c-input {
+    width: 100%; margin-top: 10px; background: var(--sunken); color: var(--text);
+    border: 1px solid var(--line-2); border-radius: var(--r-sm);
+    padding: 10px 12px; font: 400 14px/1.5 var(--sans); resize: vertical;
+  }
+  .c-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
+  .c-hint { font-size: 11.5px; color: var(--muted); }
+  .c-err { color: var(--danger); font-size: 12.5px; margin-top: 8px; min-height: 18px; }
+  .c-okmsg { color: var(--ok); font-size: 12.5px; margin-top: 8px; min-height: 18px; }
+  
+  .c-prof { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; margin: 10px 12px; }
+  .c-prof-top { display: flex; align-items: center; gap: 14px; }
+  .c-av {
+    width: 36px; height: 36px; min-width: 36px; border-radius: 50%;
+    object-fit: cover; background: var(--panel-2); border: 1px solid var(--line-2);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: var(--text); overflow: hidden;
+  }
+  .c-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .c-prof .c-av { width: 64px; height: 64px; min-width: 64px; font-size: 24px; }
+  .c-stats { display: flex; gap: 18px; flex: 1; justify-content: flex-end; text-align: center; }
+  .c-stats .c-stat { background: transparent; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; text-align: center; }
+  .c-socback { background: transparent; border: 0; color: var(--text); font: 700 13px/1 var(--sans); cursor: pointer; padding: 4px 8px; margin-left: -8px; }
+  .c-soctitle { display: block; margin: 6px 0 10px; font-size: 15px; }
+  .c-srow { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .c-srow:last-child { border-bottom: 0; }
+  .c-srow .c-av { width: 40px; height: 40px; min-width: 40px; font-size: 16px; cursor: pointer; }
+  .c-srow b { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; font-size: 13.5px; }
+  .c-stats b { display: block; font-size: 15px; }
+  .c-stats span { font-size: 11px; color: var(--muted); }
+  .c-bio { margin: 12px 0 0; font-size: 13.5px; white-space: pre-wrap; word-break: break-word; }
+  .c-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 14px; }
+  .c-grid button { position: relative; aspect-ratio: 1; border: 0; padding: 0; background: var(--sunken); border-radius: 6px; overflow: hidden; cursor: pointer; }
+  .c-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .c-grid .c-gl { position: absolute; right: 5px; bottom: 4px; font: 700 11px/1 var(--sans); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.8); display: flex; align-items: center; gap: 3px; }
+  .c-grid .c-gl svg { width: 13px; height: 13px; }
+  .c-edit { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .c-edit label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+  .c-edit input[type="text"], .c-edit textarea {
+    width: 100%; background: var(--sunken); color: var(--text);
+    border: 1px solid var(--line-2); border-radius: var(--r-sm); padding: 9px 11px;
+    font: 400 14px/1.5 var(--sans);
+  }
+  .c-edit input[type="color"] { width: 52px; height: 36px; padding: 2px; background: var(--sunken); border: 1px solid var(--line-2); border-radius: var(--r-sm); }
+  .c-avatar-row { display: flex; align-items: center; gap: 12px; }
+  .c-follow {
+    border: 1px solid var(--line-2); background: transparent; color: var(--text);
+    border-radius: 999px; padding: 6px 12px; min-height: 32px; font-weight: 700; font-size: 12px;
+  }
+  .c-follow.is-on { background: var(--text); border-color: var(--text); color: var(--fg); }
+  
+  .c-modal {
+    position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.72);
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .c-modal .c-mbox {
+    width: 100%; max-width: 520px; max-height: 92vh; overflow: auto;
+    background: var(--panel); border: 1px solid var(--line); border-bottom: 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 12px;
+  }
+  .c-mgrab { width: 44px; height: 4px; border-radius: 2px; background: var(--line-2); margin: 0 auto 10px; flex-shrink: 0; }
+  
+  .c-modal { animation: cFade .18s ease; }
+  .c-modal .c-mbox { animation: cUp .26s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes cFade { from { opacity: 0; } }
+  @keyframes cUp { from { transform: translateY(100%); } }
+  @keyframes cPop { 0% { transform: scale(1); } 40% { transform: scale(1.4); } 100% { transform: scale(1); } }
+  #cPostModal .c-mbox {
+    height: 72dvh; max-height: 72dvh; padding: 0 14px calc(10px + env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .c-mhead { display: flex; align-items: center; justify-content: center; position: relative; padding: 2px 0 8px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  .c-mhead b { font-size: 13.5px; }
+  .c-mclose { position: absolute; right: 0; top: -2px; background: transparent; border: 0; color: var(--muted); font: 700 16px/1 var(--sans); cursor: pointer; padding: 4px 6px; }
+  #cPostModal .c-cmt-list { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 2px; }
+  #cPostModal .c-cmt-row, #cPostModal .c-replybar, #cPostModal .c-err, #cPostModal .c-chint { flex-shrink: 0; }
+  .c-cmt { display: flex; gap: 9px; padding: 9px 0; font-size: 13px; border-bottom: 1px solid var(--line); align-items: flex-start; }
+  .c-cmt:last-child { border-bottom: 0; }
+  .c-cmt .c-cav {
+    width: 32px; height: 32px; min-width: 32px; border-radius: 50%; overflow: hidden;
+    background: var(--panel-2); border: 1.5px solid var(--line-2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font: 800 13px/1 var(--sans);
+  }
+  .c-cmt .c-cav img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .c-cmt.is-reply .c-cav { width: 26px; height: 26px; min-width: 26px; font-size: 11px; }
+  .c-cbody { flex: 1; min-width: 0; }
+  .c-cmt .c-cbody b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: 12px; cursor: pointer; }
+  .c-cmt span { color: var(--text); word-break: break-word; display: block; font-size: 13.5px; }
+  .c-cmt em { color: var(--muted); font-style: normal; font-size: 11px; display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+  .c-cmt .c-clike { flex-direction: column; gap: 2px; align-self: center; }
+  .c-cmt-row { display: flex; gap: 8px; margin-top: 10px; }
+  .c-cmt-row input { flex: 1; margin-top: 0; }
+  #cToast {
+    position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--line-2);
+    border-radius: 999px; padding: 9px 16px; font-size: 12.5px; font-weight: 700;
+    opacity: 0; pointer-events: none; transition: opacity .18s ease; z-index: 60; max-width: 88vw; text-align: center;
+  }
+  #cToast.is-on { opacity: 1; }
+  @media (min-width: 700px) {
+    .c-modal { align-items: center; }
+    .c-modal .c-mbox { border-radius: var(--r-lg); border-bottom: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="c-i-heart" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 21s-7.8-5-9.7-9.8C.9 7.6 3.2 4.5 6.4 4.5c2.1 0 3.9 1.1 4.9 2.9h1.4c1-1.8 2.8-2.9 4.9-2.9 3.2 0 5.5 3.1 4.1 6.7C19.8 16 12 21 12 21z"/></symbol>
+  <symbol id="c-i-cmt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M20 11.6c0 4-3.6 7.2-8 7.2-1 0-2-.2-2.9-.5L4 19.5l1.3-3.4C4.1 15 3.5 13.4 3.5 11.6c0-4 3.6-7.2 8-7.2s8 3.2 8 7.2z"/></symbol>
+  <symbol id="c-i-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M13.5 5.5 20 11l-6.5 5.5v-3.6C9 12.9 6 14.6 4.5 18c0-5 3-8.4 9-8.9V5.5z"/></symbol>
+  <symbol id="c-i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4.5 6.5h15M9.5 6V4.5h5V6m-8 0 .8 13h9.4l.8-13M10 10v6m4-6v6"/></symbol>
+  <symbol id="c-i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 11.5 12 4l8 7.5M6.5 10v9h11v-9"/></symbol>
+  <symbol id="c-i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="c-i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="c-i-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M6 16v-5.5a6 6 0 0 1 12 0V16l1.8 2.5H4.2L6 16z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M9.8 21a2.4 2.4 0 0 0 4.4 0"/></symbol>
+  <symbol id="c-i-flag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5.5 21V4m0 .5h11l-2.2 3.8 2.2 3.7h-11"/></symbol>
+  <symbol id="c-i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.2" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4.5 20c.8-3.6 3.9-5.6 7.5-5.6s6.7 2 7.5 5.6"/></symbol>
+</svg>
+
+<div class="c-app">
+  <header class="c-top">
+    <div class="c-tabs">
+      <button type="button" id="cTabFor" class="is-on" data-i18n="commForYou">For you</button>
+      <button type="button" id="cTabFol" data-i18n="commFollowingTab">Following</button>
+      <button type="button" id="cTabTop">Top</button>
+    </div>
+    <button type="button" class="c-bell" id="cBell" aria-label="Activity" hidden><svg aria-hidden="true"><use href="#c-i-bell"></use></svg><span class="c-nbadge" id="cNBadge" hidden>0</span></button>
+  </header>
+
+  <main class="c-main">
+    <div class="c-note" id="cSigninNote" hidden>
+      <span data-i18n="commSignin">Sign in with your Vexora account to post, like or comment.</span>
+      <a href="/" data-i18n="commSigninBtn">Sign in</a>
+    </div>
+
+    
+    <section id="cFeedView">
+      <div class="c-feed" id="cFeedScroll">
+        <div id="cFeedList"></div>
+        <div class="c-empty onblack" id="cFeedEmpty" hidden data-i18n="commNoPosts">No posts yet — be the first!</div>
+        <div class="c-empty onblack" id="cFeedMore" hidden data-i18n="commLoading">Loading…</div>
+        <div id="cSentinel" style="height:1px"></div>
+      </div>
+    </section>
+
+    
+    <section id="cNewView" hidden>
+      <div class="c-new">
+        <div class="c-prev" id="cPrev" data-i18n="commPick">Tap below to pick a photo</div>
+        <input type="file" id="cFile" accept="image/png,image/jpeg,image/webp" hidden />
+        <div class="c-row">
+          <button type="button" class="btn ghost sm" id="btnCPick" data-i18n="commChoose">Choose photo</button>
+          <span class="c-hint" id="cSizeHint"></span>
+        </div>
+        <textarea id="cCap" maxlength="160" rows="2" data-i18n-ph="commCaption"></textarea>
+        <div class="c-err" id="cNewErr"></div>
+        <button type="button" class="btn" id="btnCPublish" style="width:100%" data-i18n="commPublish">Publish</button>
+      </div>
+    </section>
+
+    
+    <section id="cMeView" hidden></section>
+  </main>
+
+  <nav class="c-nav">
+    <button type="button" id="cNavFeed" class="is-on"><svg aria-hidden="true"><use href="#c-i-home"></use></svg><span data-i18n="commFeed">Feed</span></button>
+    <button type="button" id="cNavNew" class="c-plus" aria-label="New post"><svg aria-hidden="true"><use href="#c-i-plus"></use></svg></button>
+    <button type="button" id="cNavMe"><svg aria-hidden="true"><use href="#c-i-user"></use></svg><span data-i18n="commProfile">Profile</span></button>
+  </nav>
+
+  
+  <div class="c-modal" id="cPostModal" hidden>
+    <div class="c-mbox" id="cPostBox"></div>
+  </div>
+
+  
+  <div class="c-modal" id="cNotifModal" hidden>
+    <div class="c-mbox" id="cNotifBox"></div>
+  </div>
+
+  
+  <div class="c-modal" id="cRepModal" hidden>
+    <div class="c-mbox" id="cRepBox"></div>
+  </div>
+</div>
+
+<div id="cToast" role="status"></div>
+
+<script src="/assets/i18n.js?v=1681"></script>
+<script>
+(() => {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const TOK = "vexora.riderTok", MENAME = "vexora.riderMe";
+  let tok = "", me = "";
+  try {
+    tok = localStorage.getItem(TOK) || "";
+    me = (localStorage.getItem(MENAME) || "").replace(/^@/, "");
+  } catch (e) {}
+  const auth = () => tok ? {
+    "x-rider-token": tok
+  } : {};
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+  const T = (k, fb) => {
+    try {
+      return window.I18N && I18N.t(k) || fb || k;
+    } catch (e) {
+      return fb || k;
+    }
+  };
+  function toast(msg) {
+    const el = $("#cToast");
+    el.textContent = msg;
+    el.classList.add("is-on");
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => el.classList.remove("is-on"), 2600);
+  }
+  function ago(ts) {
+    const d = Date.now() - Number(ts || 0);
+    if (d < 9e4) return "now";
+    if (d < 36e5) return Math.floor(d / 6e4) + "m";
+    if (d < 864e5) return Math.floor(d / 36e5) + "h";
+    if (d < 6048e5) return Math.floor(d / 864e5) + "d";
+    return new Date(Number(ts)).toISOString().slice(0, 10);
+  }
+  async function api(p, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({
+      "content-type": "application/json"
+    }, auth(), opts.headers || {});
+    const r = await fetch(p, opts);
+    let b = null;
+    try {
+      b = await r.json();
+    } catch (e) {
+      b = {};
+    }
+    return {
+      status: r.status,
+      body: b
+    };
+  }
+  let cur = "Feed";
+  function show(v) {
+    cur = v;
+    $(".c-top").hidden = v !== "Feed";
+    $("#cFeedView").hidden = v !== "Feed";
+    $("#cNewView").hidden = v !== "New";
+    $("#cMeView").hidden = v !== "Me";
+    $("#cNavFeed").classList.toggle("is-on", v === "Feed");
+    $("#cNavNew").classList.toggle("is-on", v === "New");
+    $("#cNavMe").classList.toggle("is-on", v === "Me");
+    $("#cSigninNote").hidden = !!me;
+    if (v === "Feed") {
+      feedBoot(true);
+      refreshBell().catch(() => {});
+    }
+    if (v === "Me") openProfile(me || "");
+    window.scrollTo(0, 0);
+  }
+  $("#cNavFeed").addEventListener("click", () => show("Feed"));
+  $("#cNavNew").addEventListener("click", () => {
+    if (requireAuth()) show("New");
+  });
+  $("#cNavMe").addEventListener("click", () => {
+    if (requireAuth()) show("Me");
+  });
+  function requireAuth() {
+    if (me && tok) return true;
+    toast(T("commLoginNeed", "Sign in first — open Vexora"));
+    return false;
+  }
+  let feedTab = "foryou";
+  function setTab(t) {
+    feedTab = t;
+    $("#cTabFor").classList.toggle("is-on", t === "foryou");
+    $("#cTabFol").classList.toggle("is-on", t === "following");
+    $("#cTabTop").classList.toggle("is-on", t === "top");
+    if (t === "following" && !tok) {
+      $("#cSigninNote").hidden = false;
+      $("#cFeedList").innerHTML = "";
+      $("#cFeedEmpty").hidden = false;
+      $("#cFeedEmpty").textContent = T("commSignin", "Sign in with your Vexora account to post, like or comment.");
+      return;
+    }
+    feedBoot(true);
+  }
+  $("#cTabFor").addEventListener("click", () => setTab("foryou"));
+  $("#cTabFol").addEventListener("click", () => setTab("following"));
+  $("#cTabTop").addEventListener("click", () => setTab("top"));
+  let feedBusy = false, feedDone = false, lastId = 0;
+  function avatarHtml(row, big) {
+    const ini = esc((row.disp || row.name || "?").slice(0, 1).toUpperCase());
+    const col = row.color && /^#[0-9a-fA-F]{6}$/.test(row.color) ? "border-color:" + esc(row.color) : "";
+    return '<span class="c-av" style="' + col + '">' + (row.avatar ? '<img src="' + esc(row.avatar) + '" alt="" loading="lazy" />' : ini) + "</span>";
+  }
+  function slideHtml(row) {
+    const mine = row.name === me;
+    const liked = !!row.liked;
+    return '<article class="c-slide" data-id="' + row.id + '">' + '<img class="c-media" src="' + esc(row.pic) + '" alt="' + esc(T("commImgAlt", "Photo by")) + " " + esc(row.name) + '" loading="lazy" />' + '<div class="c-shade"></div>' + '<div class="c-capov">' + esc(row.cap || "") + "<i>" + ago(row.ts) + "</i></div>" + '<div class="c-idrow">' + avatarHtml(row) + '<b class="c-idname" data-go="' + esc(row.name) + '">@' + esc(row.name) + "</b>" + (mine ? "" : '<button type="button" class="c-folb2' + (row.fing ? " is-on" : "") + '" data-follow="' + esc(row.name) + '">' + esc(row.fing ? T("commFollowing", "Following") : T("commFollow", "Follow")) + "</button>") + "</div>" + '<div class="c-right">' + '<button type="button" class="c-rbtn' + (liked ? " is-on" : "") + '" data-like="' + row.id + '"><svg aria-hidden="true"><use href="#c-i-heart"></use></svg><b>' + Number(row.likes) + "</b></button>" + '<button type="button" class="c-rbtn" data-open="' + row.id + '"><svg aria-hidden="true"><use href="#c-i-cmt"></use></svg><b>' + Number(row.cmts) + "</b></button>" + '<button type="button" class="c-rbtn" data-rep="' + row.id + '"><svg aria-hidden="true"><use href="#c-i-flag"></use></svg><b>' + esc(T("commReport", "Report")) + "</b></button>" + '<button type="button" class="c-rbtn" data-share="' + row.id + '"><svg aria-hidden="true"><use href="#c-i-share"></use></svg><b>' + esc(T("commShare", "Share")) + "</b></button>" + '<span class="c-rbtn c-views" data-views><svg aria-hidden="true"><use href="#c-i-eye"></use></svg><b>' + Number(row.views || 0) + "</b></span>" + (mine ? '<button type="button" class="c-rbtn" data-del="' + row.id + '"><svg aria-hidden="true"><use href="#c-i-trash"></use></svg><b>' + esc(T("commDelete", "Delete photo")) + "</b></button>" : "") + "</div></article>";
+  }
+  async function feedBoot(reset) {
+    if (feedBusy) return;
+    feedBusy = true;
+    $("#cFeedMore").hidden = false;
+    if (reset) {
+      lastId = 0;
+      feedDone = false;
+      $("#cFeedList").innerHTML = "";
+      $("#cFeedEmpty").hidden = true;
+      $("#cFeedEmpty").textContent = T("commNoPosts", "No posts yet — be the first!");
+      $("#cFeedScroll").scrollTop = 0;
+    }
+    const url = "/api/comm/feed?limit=12" + (lastId && feedTab !== "top" ? "&before=" + lastId : "") + (feedTab === "following" ? "&following=1" : "") + (feedTab === "top" ? "&sort=top" : "");
+    const r = await api(url);
+    $("#cFeedMore").hidden = true;
+    feedBusy = false;
+    if (!(r.status === 200 && r.body && r.body.ok)) {
+      toast("Feed error " + r.status);
+      return;
+    }
+    const rows = r.body.rows || [];
+    if (!rows.length || feedTab === "top") feedDone = true;
+    if (!rows.length) {
+      $("#cFeedEmpty").hidden = false;
+      return;
+    }
+    $("#cFeedEmpty").hidden = true;
+    $("#cFeedList").insertAdjacentHTML("beforeend", rows.map(x => slideHtml(x)).join(""));
+    lastId = rows[rows.length - 1].id;
+  }
+  new IntersectionObserver(ents => {
+    if (ents.some(e => e.isIntersecting) && cur === "Feed" && !feedDone) feedBoot(false);
+  }, {
+    rootMargin: "400px"
+  }).observe($("#cSentinel"));
+  let swX = 0, swY = 0, swT = 0, swSlide = null;
+  document.addEventListener("touchstart", ev => {
+    const m = ev.target.closest && ev.target.closest(".c-slide .c-media");
+    if (!m || !ev.touches || !ev.touches.length) return;
+    swX = ev.touches[0].clientX;
+    swY = ev.touches[0].clientY;
+    swT = Date.now();
+    swSlide = m.closest(".c-slide");
+  }, {
+    passive: true
+  });
+  document.addEventListener("touchend", ev => {
+    if (!swSlide || !ev.changedTouches || !ev.changedTouches.length) return;
+    const dx = ev.changedTouches[0].clientX - swX;
+    const dy = ev.changedTouches[0].clientY - swY;
+    const dt = Date.now() - swT;
+    const slide = swSlide;
+    swSlide = null;
+    if (dt < 650 && dx > 70 && Math.abs(dy) < 50) {
+      const who = slide.querySelector("[data-go]");
+      if (who) {
+        $("#cPostModal").hidden = true;
+        show("Me");
+        const g = who.getAttribute("data-go");
+        if (g !== me) openProfile(g);
+      }
+    }
+  });
+  async function doLike(btn, forceOn) {
+    if (!requireAuth()) return;
+    const id = Number(btn.getAttribute("data-like"));
+    btn.disabled = true;
+    const wasOn = btn.classList.contains("is-on");
+    if (forceOn && wasOn) {
+      btn.disabled = false;
+      return;
+    }
+    const r = await api("/api/comm/like", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id
+      })
+    });
+    btn.disabled = false;
+    if (r.status === 200 && r.body && r.body.ok) {
+      btn.classList.toggle("is-on", !!r.body.liked);
+      btn.querySelector("b").textContent = Number(r.body.likes);
+      btn.classList.remove("pop");
+      void btn.offsetWidth;
+      btn.classList.add("pop");
+      return;
+    }
+    toast(commErr(r, "Like failed"));
+  }
+  function bigHeart(slide) {
+    let h = slide.querySelector(".c-bigheart");
+    if (!h) {
+      h = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      h.setAttribute("class", "c-bigheart");
+      h.setAttribute("viewBox", "0 0 24 24");
+      h.innerHTML = '<use href="#c-i-heart"></use>';
+      slide.appendChild(h);
+    }
+    h.classList.remove("go");
+    void h.getBoundingClientRect();
+    h.classList.add("go");
+  }
+  let tapT = 0, tapTimer = null;
+  document.addEventListener("click", ev => {
+    const media = ev.target.closest(".c-media");
+    if (media) {
+      const slide = media.closest(".c-slide");
+      const id = slide ? Number(slide.getAttribute("data-id")) : 0;
+      const now = Date.now();
+      if (now - tapT < 330) {
+        clearTimeout(tapTimer);
+        tapT = 0;
+        if (slide && tok) {
+          bigHeart(slide);
+          const b = slide.querySelector("[data-like]");
+          if (b) doLike(b, true);
+        }
+        return;
+      }
+      tapT = now;
+      if (tapTimer) clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => {
+        if (id) openPost(id);
+      }, 290);
+      return;
+    }
+    const like = ev.target.closest("[data-like]");
+    if (like) {
+      doLike(like, false);
+      return;
+    }
+    const fol = ev.target.closest("[data-follow]");
+    if (fol) {
+      if (!requireAuth()) return;
+      fol.disabled = true;
+      api("/api/comm/follow", {
+        method: "POST",
+        body: JSON.stringify({
+          name: fol.getAttribute("data-follow")
+        })
+      }).then(r => {
+        fol.disabled = false;
+        if (r.status === 200 && r.body && r.body.ok) {
+          fol.classList.toggle("is-on", !!r.body.following);
+          fol.textContent = r.body.following ? T("commFollowing", "Following") : T("commFollow", "Follow");
+          toast(r.body.following ? T("commFollowing", "Following") : T("commFollow", "Follow"));
+        } else toast(commErr(r, "Follow failed"));
+      });
+      return;
+    }
+    const sh = ev.target.closest("[data-share]");
+    if (sh) {
+      sharePost(Number(sh.getAttribute("data-share")));
+      return;
+    }
+    const rep = ev.target.closest("[data-rep]");
+    if (rep) {
+      reportPost(Number(rep.getAttribute("data-rep")));
+      return;
+    }
+    const del = ev.target.closest("[data-del]");
+    if (del) {
+      deletePost(Number(del.getAttribute("data-del")));
+      return;
+    }
+    const open = ev.target.closest("[data-open]");
+    if (open) {
+      openPost(Number(open.getAttribute("data-open")));
+      return;
+    }
+    const go = ev.target.closest("[data-go]");
+    if (go) {
+      $("#cPostModal").hidden = true;
+      show("Me");
+      const g = go.getAttribute("data-go");
+      if (g !== me) openProfile(g);
+      return;
+    }
+  });
+  function commErr(r, fb) {
+    if (r.body && r.body.moderated) return T("commMod", "That language is not allowed — keep it respectful");
+    if (r.body && r.body.error) return String(r.body.error);
+    return fb || "Error " + r.status;
+  }
+  async function sharePost(id) {
+    const url = location.origin + "/community?p=" + id;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          url: url
+        });
+        return;
+      }
+    } catch (e) {}
+    try {
+      await navigator.clipboard.writeText(url);
+      toast(T("commLinkCopied", "Link copied"));
+      return;
+    } catch (e) {}
+    try {
+      window.prompt(T("commLinkCopied", "Link copied"), url);
+    } catch (e) {
+      toast(url);
+    }
+  }
+  async function deletePost(id) {
+    if (!window.confirm(T("commConfirmDel", "Delete this photo? This can't be undone"))) return;
+    const rd = await api("/api/comm/post?id=" + Number(id), {
+      method: "DELETE"
+    });
+    if (rd.status === 200 && rd.body && rd.body.ok) {
+      $("#cPostModal").hidden = true;
+      const card = document.querySelector('#cFeedList .c-slide[data-id="' + Number(id) + '"]');
+      if (card) card.remove();
+      toast(T("commDeleted", "Deleted"));
+      if (cur === "Me") openProfile(me || "");
+      return;
+    }
+    toast(commErr(rd, "Delete failed"));
+  }
+  let replying = 0, replyingName = "";
+  function cmtHtml(c, pname) {
+    const cav = c.avatar ? '<img src="' + esc(c.avatar) + '" alt="" />' : esc((c.name_disp || c.name || "?").slice(0, 1).toUpperCase());
+    const cst = c.color && /^#[0-9a-fA-F]{6}$/.test(c.color) ? "border-color:" + esc(c.color) : "";
+    return '<div class="c-cmt' + (c.parent ? " is-reply" : "") + (c.mine ? " is-mine" : "") + '" data-cid="' + c.id + '"' + (c.mine ? ' data-cmine="' + c.id + '"' : "") + ">" + '<span class="c-cav" data-go="' + esc(c.name) + '" style="' + cst + '">' + cav + "</span>" + '<div class="c-cbody"><b data-go="' + esc(c.name) + '">@' + esc(c.name_disp || c.name) + "</b><span>" + esc(c.msg) + "</span><em>" + (c.parent && pname ? '<i class="c-re">↳ @' + esc(pname) + "</i>" : "") + ago(c.ts) + (c.mine ? ' <button type="button" class="c-cact" data-cdel="' + c.id + '" aria-label="Delete">🗑</button>' : "") + (me && tok && !c.parent ? ' <button type="button" class="c-cact" data-creply="' + c.id + '" data-cname="' + esc(c.name) + '">' + esc(T("commReply", "Reply")) + "</button>" : "") + "</em></div>" + '<button type="button" class="c-clike' + (c.liked ? " is-on" : "") + '" data-clike="' + c.id + '"><svg aria-hidden="true" viewBox="0 0 24 24"><use href="#c-i-heart"></use></svg><b>' + Number(c.likes || 0) + "</b></button>" + "</div>";
+  }
+  async function openPost(id) {
+    const modal = $("#cPostModal");
+    const box = $("#cPostBox");
+    modal.hidden = false;
+    openId = Number(id);
+    replying = 0;
+    replyingName = "";
+    box.innerHTML = '<div class="c-mgrab"></div><div class="c-mhead"><b id="cCmtHead">' + esc(T("commCmts", "Comments")) + '</b><button type="button" class="c-mclose" id="cCmtClose" aria-label="Close">✕</button></div><div class="c-cmt-list" id="cCmtList"><div class="c-empty">' + esc(T("commLoading", "Loading…")) + "</div></div>" + (me && tok ? '<div class="c-cmt-row"><input class="c-input" id="cCmtIn" maxlength="280" placeholder="' + esc(T("commCommentPh", "Add a comment…")) + '" /><button type="button" class="btn sm" id="cCmtGo">' + esc(T("commSend", "Send")) + "</button></div>" + '<div class="c-err" id="cCmtErr"></div><div class="c-replybar" id="cReplyBar" hidden><span>' + esc(T("commReplyTo", "Replying to")) + ' <b id="cReplyName"></b></span><button type="button" id="cReplyX">✕</button></div>' + '<div class="c-chint">' + esc(T("commHoldDel", "Hold your comment to delete it")) + "</div>" : '<div class="c-empty">' + esc(T("commSignin", "Sign in with your Vexora account to post, like or comment.")) + "</div>");
+    $("#cCmtClose").addEventListener("click", () => {
+      modal.hidden = true;
+    });
+    if (me && tok) {
+      $("#cCmtGo").addEventListener("click", () => sendComment(id));
+      $("#cCmtIn").addEventListener("keydown", e => {
+        if (e.key === "Enter") sendComment(id);
+      });
+      $("#cReplyX").addEventListener("click", () => {
+        replying = 0;
+        $("#cReplyBar").hidden = true;
+      });
+    }
+    await loadComments(id);
+    const ch = $("#cCmtHead");
+    if (ch) ch.textContent = T("commCmts", "Comments") + " · " + $("#cCmtList").querySelectorAll(".c-cmt").length;
+    api("/api/comm/view", {
+      method: "POST",
+      body: JSON.stringify({
+        id: Number(id)
+      })
+    }).then(rv => {
+      if (rv.status === 200 && rv.body && rv.body.ok) {
+        const fb = document.querySelector('#cFeedList .c-slide[data-id="' + Number(id) + '"] [data-views] b');
+        if (fb) fb.textContent = Number(rv.body.views);
+      }
+    }).catch(() => {});
+  }
+  async function loadComments(id) {
+    const list = $("#cCmtList");
+    if (!list) return;
+    const r = await api("/api/comm/comments?post=" + Number(id));
+    const rows = r.body && r.body.rows || [];
+    if (!rows.length) {
+      list.innerHTML = '<div class="c-empty">' + esc(T("commNoComments", "No comments yet")) + "</div>";
+      return;
+    }
+    const top = rows.filter(c => !c.parent);
+    const kids = {};
+    rows.forEach(c => {
+      if (c.parent) {
+        (kids[c.parent] = kids[c.parent] || []).push(c);
+      }
+    });
+    const names = {};
+    rows.forEach(c => {
+      names[c.id] = c.name;
+    });
+    list.innerHTML = top.map(c => cmtHtml(c, "") + (kids[c.id] || []).map(k => cmtHtml(k, names[k.parent] || "")).join("")).join("");
+    bindLongPress();
+  }
+  function bindLongPress() {
+    const box = $("#cPostBox");
+    box.querySelectorAll("[data-cmine]").forEach(el => {
+      let t = null;
+      const fire = () => {
+        delComment(Number(el.getAttribute("data-cmine")));
+      };
+      el.addEventListener("touchstart", () => {
+        t = setTimeout(fire, 550);
+      }, {
+        passive: true
+      });
+      el.addEventListener("touchend", () => clearTimeout(t));
+      el.addEventListener("touchmove", () => clearTimeout(t));
+      el.addEventListener("contextmenu", e => {
+        e.preventDefault();
+        fire();
+      });
+    });
+  }
+  async function delComment(cid) {
+    if (!window.confirm(T("commConfirmDelC", "Delete this comment?"))) return;
+    const r = await api("/api/comm/comment?id=" + cid, {
+      method: "DELETE"
+    });
+    if (r.status === 200 && r.body && r.body.ok) {
+      toast(T("commDeleted", "Deleted"));
+      let gone = 1;
+      const item = document.querySelector('.c-cmt[data-cid="' + cid + '"]');
+      if (item) {
+        let nx = item.nextElementSibling;
+        while (nx && nx.classList.contains("is-reply")) {
+          gone++;
+          nx = nx.nextElementSibling;
+        }
+        item.remove();
+      }
+      await loadComments(openId);
+      bumpCmts(-gone);
+      return;
+    }
+    toast(commErr(r, "Delete failed"));
+  }
+  let openId = 0;
+  function bumpCmts(d) {
+    const cnt = document.querySelector('#cFeedList .c-slide[data-id="' + openId + '"] [data-open] b');
+    if (cnt) cnt.textContent = Math.max(0, Number(cnt.textContent || 0) + d);
+  }
+  async function sendComment(id) {
+    const inp = $("#cCmtIn"), err = $("#cCmtErr");
+    const msg = String(inp.value || "").trim();
+    err.textContent = "";
+    if (!msg) return;
+    $("#cCmtGo").disabled = true;
+    const payload = {
+      id: Number(id),
+      msg: msg
+    };
+    if (replying) payload.parent = replying;
+    const r = await api("/api/comm/comment", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    $("#cCmtGo").disabled = false;
+    if (r.status === 200 && r.body && r.body.ok) {
+      inp.value = "";
+      openId = Number(id);
+      replying = 0;
+      const rb = $("#cReplyBar");
+      if (rb) rb.hidden = true;
+      await loadComments(id);
+      bumpCmts(1);
+      return;
+    }
+    err.textContent = commErr(r, "Comment failed");
+  }
+  $("#cPostBox").addEventListener("click", async ev => {
+    if (ev.target === $("#cPostBox")) return;
+    const cgo = ev.target.closest("[data-go]");
+    if (cgo) {
+      $("#cPostModal").hidden = true;
+      openProfile(cgo.getAttribute("data-go"));
+      return;
+    }
+    const cd = ev.target.closest("[data-cdel]");
+    if (cd) {
+      delComment(Number(cd.getAttribute("data-cdel")));
+      return;
+    }
+    const cl = ev.target.closest("[data-clike]");
+    if (cl) {
+      if (!requireAuth()) return;
+      cl.disabled = true;
+      const r = await api("/api/comm/cmtlike", {
+        method: "POST",
+        body: JSON.stringify({
+          id: Number(cl.getAttribute("data-clike"))
+        })
+      });
+      cl.disabled = false;
+      if (r.status === 200 && r.body && r.body.ok) {
+        cl.classList.toggle("is-on", !!r.body.liked);
+        cl.querySelector("b").textContent = Number(r.body.likes);
+      } else toast(commErr(r, "Like failed"));
+      return;
+    }
+    const rb = ev.target.closest("[data-creply]");
+    if (rb) {
+      replying = Number(rb.getAttribute("data-creply"));
+      replyingName = rb.getAttribute("data-cname") || "";
+      $("#cReplyBar").hidden = false;
+      $("#cReplyName").textContent = "@" + replyingName;
+      $("#cCmtIn").focus();
+    }
+  });
+  $("#cPostModal").addEventListener("click", ev => {
+    if (ev.target === $("#cPostModal")) $("#cPostModal").hidden = true;
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      $("#cPostModal").hidden = true;
+      $("#cRepModal").hidden = true;
+    }
+  });
+  async function reportPost(pid) {
+    if (!requireAuth()) return;
+    const modal = $("#cRepModal"), box = $("#cRepBox");
+    modal.hidden = false;
+    const R = [ [ "spam", T("ridWhySpam", "Spam or scam") ], [ "harass", T("ridWhyHarass", "Harassment or insults") ], [ "illegal", T("ridWhyIllegal", "Sexual or illegal content") ], [ "impersonation", T("ridWhyImp", "Impersonation") ], [ "other", T("ridWhyOther", "Something else") ] ];
+    box.innerHTML = '<div class="c-mgrab"></div><h3 style="margin:2px 0 10px;font-size:15px">' + esc(T("ridWhyTitle", "What's happening?")) + "</h3>" + R.map((x, i) => '<label style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:13.5px"><input type="radio" name="cWhy" value="' + x[0] + '"' + (i === 0 ? " checked" : "") + " />" + esc(x[1]) + "</label>").join("") + '<textarea id="cRepDetail" rows="2" maxlength="500" placeholder="' + esc(T("ridWhyPh", "Tell us a bit more (optional)")) + '" style="margin-top:10px"></textarea>' + '<div class="c-err" id="cRepErr"></div>' + '<button type="button" class="btn" id="cRepGo" style="width:100%;margin-top:8px">' + esc(T("ridWhySend", "Submit report")) + "</button>" + '<button type="button" class="btn ghost" id="cRepX" style="width:100%;margin-top:8px">' + esc(T("commCancel", "Cancel")) + "</button>";
+    $("#cRepX").addEventListener("click", () => {
+      modal.hidden = true;
+    });
+    $("#cRepGo").addEventListener("click", async () => {
+      const btn = $("#cRepGo");
+      btn.disabled = true;
+      const r = await api("/api/comm/report", {
+        method: "POST",
+        body: JSON.stringify({
+          post: Number(pid),
+          reason: (box.querySelector("input[name=cWhy]:checked") || {}).value || "other",
+          detail: String(($("#cRepDetail") || {}).value || "").trim()
+        })
+      });
+      btn.disabled = false;
+      if (r.status === 200 && r.body && r.body.ok) {
+        box.innerHTML = '<div class="c-mgrab"></div><div class="c-empty" style="color:var(--ok);font-weight:700">' + esc(T("ridThanks", "Thanks for reporting — our team will review it.")) + "</div>";
+        setTimeout(() => {
+          modal.hidden = true;
+        }, 1800);
+        return;
+      }
+      $("#cRepErr").textContent = commErr(r, "Report failed");
+    });
+  }
+  function notifText(n) {
+    const who = "@" + (n.adisp || n.aname || "someone");
+    if (n.kind === "like") return who + " " + T("commLikedYour", "liked your photo");
+    if (n.kind === "clike") return who + " " + T("commLikedCmt", "liked your comment");
+    if (n.kind === "comment") return who + " " + T("commCommentedYour", "commented:") + ' "' + (n.msg || "") + '"';
+    return who + " " + T("commFollowedYou", "started following you");
+  }
+  async function refreshBell() {
+    if (!tok) {
+      $("#cBell").hidden = true;
+      return;
+    }
+    $("#cBell").hidden = false;
+    const r = await api("/api/comm/notifs").catch(() => null);
+    const n = r && r.body && Number(r.body.unseen) || 0;
+    $("#cNBadge").hidden = n === 0;
+    $("#cNBadge").textContent = n > 99 ? "99+" : String(n);
+  }
+  async function openNotifs() {
+    const modal = $("#cNotifModal");
+    const box = $("#cNotifBox");
+    modal.hidden = false;
+    box.innerHTML = '<div class="c-mgrab"></div><div class="c-empty">' + esc(T("commLoading", "Loading…")) + "</div>";
+    const r = await api("/api/comm/notifs");
+    const rows = r.body && r.body.rows || [];
+    box.innerHTML = '<div class="c-mgrab"></div><h3 style="margin:2px 0 8px;font-size:15px">' + esc(T("commNotifs", "Activity")) + "</h3>" + (rows.length ? rows.map(n => '<button type="button" class="c-nitem is-' + esc(n.kind) + (n.seen ? "" : " new") + '" data-npost="' + Number(n.post || 0) + '">' + '<svg aria-hidden="true"><use href="#c-i-' + (n.kind === "comment" ? "cmt" : n.kind === "follow" ? "user" : "heart") + '"></use></svg>' + "<span>" + esc(notifText(n)) + " <i>" + ago(n.ts) + "</i></span></button>").join("") : '<div class="c-empty">' + esc(T("commNoNotifs", "Nothing new yet")) + "</div>");
+    api("/api/comm/notifs/seen", {
+      method: "POST",
+      body: "{}"
+    }).then(() => refreshBell()).catch(() => {});
+  }
+  $("#cBell").addEventListener("click", openNotifs);
+  $("#cNotifModal").addEventListener("click", ev => {
+    if (ev.target === $("#cNotifModal")) $("#cNotifModal").hidden = true;
+  });
+  $("#cNotifBox").addEventListener("click", ev => {
+    const it = ev.target.closest("[data-npost]");
+    if (!it) return;
+    const pid = Number(it.getAttribute("data-npost"));
+    $("#cNotifModal").hidden = true;
+    if (pid) openPost(pid);
+  });
+  let profLoaded = false;
+  let socName = "";
+  $("#cMeView").addEventListener("click", ev => {
+    const soc = ev.target.closest("[data-soc]");
+    if (soc) {
+      renderSocial(socName, soc.getAttribute("data-soc"));
+      return;
+    }
+    const back = ev.target.closest("[data-socback]");
+    if (back) openProfile(back.getAttribute("data-socback"));
+  });
+  async function renderSocial(name, which) {
+    const box = $("#cMeView");
+    box.innerHTML = '<div class="c-prof"><div class="c-empty">' + esc(T("commLoading", "Loading…")) + "</div></div>";
+    const r = await api("/api/comm/social?name=" + encodeURIComponent(name || ""));
+    if (!(r.status === 200 && r.body && r.body.ok)) {
+      box.innerHTML = '<div class="c-prof"><div class="c-empty">' + esc(r.body && r.body.error ? r.body.error : "—") + "</div></div>";
+      return;
+    }
+    const list = which === "fers" ? r.body.fers : r.body.fing;
+    box.innerHTML = '<div class="c-prof"><button type="button" class="c-socback" data-socback="' + esc(name) + '">← ' + esc(T("commBack", "Back")) + "</button>" + '<b class="c-soctitle">' + esc(which === "fers" ? T("commFollowers", "Followers") : T("commFollowingT", "Following")) + " · @" + esc(name) + "</b>" + (list.length ? list.map(u2 => '<div class="c-srow">' + avatarHtml(u2) + '<b data-go="' + esc(u2.name) + '">@' + esc(u2.name) + "</b>" + (u2.me ? "" : '<button type="button" class="c-follow' + (u2.fing ? " is-on" : "") + '" data-follow="' + esc(u2.name) + '">' + esc(u2.fing ? T("commFollowing", "Following") : T("commFollow", "Follow")) + "</button>") + "</div>").join("") : '<div class="c-empty">' + esc(T("commEmpty", "Nothing here yet")) + "</div>") + "</div>";
+  }
+  async function openProfile(name) {
+    const box = $("#cMeView");
+    if (!name) {
+      box.innerHTML = '<div class="c-prof"><div class="c-empty">' + esc(T("commSignin", "Sign in with your Vexora account to post, like or comment.")) + '</div><a class="btn" style="width:100%;margin-top:10px" href="/">' + esc(T("commSigninBtn", "Sign in")) + "</a></div>";
+      return;
+    }
+    if (!profLoaded && name === me) box.innerHTML = '<div class="c-prof"><div class="c-empty">' + esc(T("commLoading", "Loading…")) + "</div></div>";
+    const r = await api("/api/comm/profile/" + encodeURIComponent(name));
+    if (!(r.status === 200 && r.body && r.body.ok)) {
+      box.innerHTML = '<div class="c-prof"><div class="c-empty">' + esc(r.body && r.body.error ? r.body.error : "Profile not found") + "</div></div>";
+      return;
+    }
+    const p = r.body;
+    socName = p.name;
+    const own = p.name === me;
+    const av = p.avatar ? '<img src="' + esc(p.avatar) + '" alt="" />' : esc((p.disp || p.name || "?").slice(0, 1).toUpperCase());
+    const avStyle = p.color && /^#[0-9a-fA-F]{6}$/.test(p.color) ? "border-color:" + esc(p.color) : "";
+    box.innerHTML = '<div class="c-prof">' + '<div class="c-prof-top"><span class="c-av" style="' + avStyle + '">' + av + "</span>" + '<div style="flex:1;min-width:0"><b style="font-size:16px">' + esc(p.disp || p.name) + '</b><div style="color:var(--muted);font-size:12.5px">@' + esc(p.name) + "</div></div>" + '<div class="c-stats"><div><b>' + (p.posts || []).length + "</b><span>" + esc(T("commPosts", "Posts")) + "</span></div>" + '<button type="button" class="c-stat" data-soc="fers"><b>' + Number(p.followers) + "</b><span>" + esc(T("commFollowers", "Followers")) + "</span></button>" + '<button type="button" class="c-stat" data-soc="fing"><b>' + Number(p.following_n) + "</b><span>" + esc(T("commFollowingT", "Following")) + "</span></button></div></div>" + (p.bio ? '<p class="c-bio"' + (p.color && /^#[0-9a-fA-F]{6}$/.test(p.color) ? ' style="color:' + esc(p.color) + '"' : "") + ">" + esc(p.bio) + "</p>" : "") + (own ? '<div class="c-row"><button type="button" class="btn ghost sm" id="cEditGo">' + esc(T("commEdit", "Edit profile")) + '</button><a class="btn ghost sm" href="/">' + esc(T("commOpenVex", "Open Vexora")) + "</a></div>" + '<div class="c-edit" id="cEditBox" hidden>' + '<div class="c-avatar-row"><span class="c-av" id="cEditAv">' + av + '</span><button type="button" class="btn ghost sm" id="cAvPick">' + esc(T("commAvatar", "Avatar")) + '</button><input type="file" id="cAvFile" accept="image/png,image/jpeg" hidden /><input type="hidden" id="cAvData" /></div>' + '<label for="cBioIn">' + esc(T("commBio", "Bio")) + '</label><textarea id="cBioIn" rows="2" maxlength="160">' + esc(p.bio || "") + "</textarea>" + '<label for="cColIn">' + esc(T("commColor", "Accent color")) + '</label><input type="color" id="cColIn" value="' + esc(/^#[0-9a-fA-F]{6}$/.test(p.color || "") ? p.color : "#31c48d") + '" />' + '<div class="c-err" id="cProfErr"></div><div class="c-okmsg" id="cProfOk"></div>' + '<button type="button" class="btn" id="cProfSave" style="width:100%">' + esc(T("commSave", "Save")) + "</button></div>" : '<div class="c-row"><button type="button" class="c-follow' + (p.following ? " is-on" : "") + '" id="cProfFol">' + esc(p.following ? T("commFollowing", "Following") : T("commFollow", "Follow")) + "</button></div>") + '<div class="c-grid">' + (p.posts || []).map(x => '<button type="button" data-open="' + x.id + '"><img src="' + esc(x.pic) + '" alt="" loading="lazy" /><span class="c-gl"><svg aria-hidden="true"><use href="#c-i-heart"></use></svg>' + Number(x.likes) + "</span></button>").join("") + (!(p.posts || []).length ? '<div class="c-empty" style="grid-column:1/-1">' + esc(T("commEmpty", "Nothing here yet")) + "</div>" : "") + "</div></div>";
+    profLoaded = true;
+    const eg = $("#cEditGo");
+    if (eg) eg.addEventListener("click", () => {
+      $("#cEditBox").hidden = !$("#cEditBox").hidden;
+    });
+    const ap = $("#cAvPick");
+    if (ap) {
+      ap.addEventListener("click", () => $("#cAvFile").click());
+      $("#cAvFile").addEventListener("change", async () => {
+        const f = $("#cAvFile").files && $("#cAvFile").files[0];
+        if (!f) return;
+        const dataUrl = await shrinkSquare(f, 256);
+        if (!dataUrl) {
+          $("#cProfErr").textContent = T("commTooBig", "Photo too big");
+          return;
+        }
+        $("#cAvData").value = dataUrl;
+        $("#cEditAv").innerHTML = '<img src="' + dataUrl + '" alt="" />';
+      });
+      $("#cProfSave").addEventListener("click", saveProfile);
+    }
+    const pf = $("#cProfFol");
+    if (pf) pf.addEventListener("click", async () => {
+      pf.disabled = true;
+      const r2 = await api("/api/comm/follow", {
+        method: "POST",
+        body: JSON.stringify({
+          name: p.name
+        })
+      });
+      pf.disabled = false;
+      if (r2.status === 200 && r2.body && r2.body.ok) {
+        pf.classList.toggle("is-on", !!r2.body.following);
+        pf.textContent = r2.body.following ? T("commFollowing", "Following") : T("commFollow", "Follow");
+        openProfile(name);
+        return;
+      }
+      toast(commErr(r2, "Follow failed"));
+    });
+  }
+  async function saveProfile() {
+    const err = $("#cProfErr"), ok = $("#cProfOk");
+    err.textContent = "";
+    ok.textContent = "";
+    const btn = $("#cProfSave");
+    btn.disabled = true;
+    const payload = {
+      bio: String($("#cBioIn").value || "").trim(),
+      color: String($("#cColIn").value || "").trim()
+    };
+    const av = String($("#cAvData").value || "");
+    if (av) payload.avatar = av;
+    const r = await api("/api/comm/profile", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    btn.disabled = false;
+    if (r.status === 200 && r.body && r.body.ok) {
+      ok.textContent = T("commSaved", "Saved");
+      profLoaded = false;
+      setTimeout(() => openProfile(me || ""), 600);
+      return;
+    }
+    err.textContent = commErr(r, "Save failed");
+  }
+  let newImg = "";
+  $("#btnCPick").addEventListener("click", () => $("#cFile").click());
+  $("#cFile").addEventListener("change", async () => {
+    const f = $("#cFile").files && $("#cFile").files[0];
+    if (!f) return;
+    $("#cNewErr").textContent = "";
+    $("#cPrev").innerHTML = '<div class="c-empty">' + esc(T("commLoading", "Loading…")) + "</div>";
+    const dataUrl = await shrink(f, 1440);
+    if (!dataUrl) {
+      $("#cPrev").textContent = T("commPick", "Tap below to pick a photo");
+      $("#cNewErr").textContent = T("commTooBig", "Photo too big");
+      newImg = "";
+      return;
+    }
+    newImg = dataUrl;
+    $("#cPrev").innerHTML = '<img src="' + dataUrl + '" alt="" />';
+    $("#cSizeHint").textContent = Math.round(dataUrl.length * 3 / 4 / 1024) + " KB";
+  });
+  $("#btnCPublish").addEventListener("click", async () => {
+    const err = $("#cNewErr");
+    err.textContent = "";
+    if (!newImg) {
+      err.textContent = T("commPickFirst", "Choose a photo first");
+      return;
+    }
+    const btn = $("#btnCPublish");
+    btn.disabled = true;
+    const cap = String($("#cCap").value || "").trim();
+    const r = await api("/api/comm/post", {
+      method: "POST",
+      body: JSON.stringify({
+        img: newImg,
+        cap: cap
+      })
+    });
+    btn.disabled = false;
+    if (r.status === 200 && r.body && r.body.ok) {
+      newImg = "";
+      $("#cFile").value = "";
+      $("#cCap").value = "";
+      $("#cPrev").textContent = T("commPick", "Tap below to pick a photo");
+      $("#cSizeHint").textContent = "";
+      toast(T("commPosted", "Published!"));
+      show("Feed");
+      return;
+    }
+    err.textContent = commErr(r, "Publish failed");
+  });
+  function shrink(file, maxSide) {
+    return new Promise(res => {
+      const img = new Image;
+      const url = URL.createObjectURL(file);
+      img.onload = async () => {
+        URL.revokeObjectURL(url);
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const scale = Math.min(1, maxSide / Math.max(w, h));
+        w = Math.max(1, Math.round(w * scale));
+        h = Math.max(1, Math.round(h * scale));
+        for (const q of [ .85, .75, .68 ]) {
+          const cv = document.createElement("canvas");
+          cv.width = w;
+          cv.height = h;
+          cv.getContext("2d").drawImage(img, 0, 0, w, h);
+          const d = cv.toDataURL("image/jpeg", q);
+          if (d.length <= 68e4 || q === .68) {
+            res(d);
+            return;
+          }
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        res(null);
+      };
+      img.src = url;
+    });
+  }
+  function shrinkSquare(file, side) {
+    return new Promise(res => {
+      const img = new Image;
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const cv = document.createElement("canvas");
+        cv.width = side;
+        cv.height = side;
+        const s = Math.min(img.naturalWidth, img.naturalHeight);
+        const sx = Math.floor((img.naturalWidth - s) / 2), sy = Math.floor((img.naturalHeight - s) / 2);
+        cv.getContext("2d").drawImage(img, sx, sy, s, s, 0, 0, side, side);
+        const d = cv.toDataURL("image/jpeg", .85);
+        res(d.length <= 12e4 ? d : null);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        res(null);
+      };
+      img.src = url;
+    });
+  }
+  try {
+    if (window.I18N) {
+      const saved = localStorage.getItem("vexora.lang");
+      if (saved) I18N.setLang(saved);
+      I18N.apply();
+    }
+  } catch (e) {}
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+    el.placeholder = T(el.getAttribute("data-i18n-ph"), "");
+  });
+  feedBoot(true);
+  refreshBell().catch(() => {});
+  try {
+    const jump = Number(new URLSearchParams(location.search).get("p") || 0);
+    if (jump) setTimeout(() => openPost(jump), 400);
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>

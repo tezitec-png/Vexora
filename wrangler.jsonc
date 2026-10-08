@@ -1,0 +1,54 @@
+{
+  // Vexora 1.9.1 · Cloudflare (proyecto «vexorium» -> vexorium.pages.dev)
+  //
+  // ⚠️ DESPLIEGUE PRINCIPAL: ZIP por el dashboard de PAGES
+  //    (vexorium-pages-upload.zip = contenido de protected/, con _worker.js
+  //    en la raíz — Pages ejecuta el worker en modo advanced y sirve el resto
+  //    como estáticos). Ese flujo NO usa este archivo.
+  //
+  // Este archivo es la RUTA ALTERNATIVA (Workers con static assets + worker):
+  //    npm run deploy  ->  wrangler deploy
+  // - run_worker_first: true — el worker va primero en TODA petición (igual
+  //   que Pages advanced mode): sirve estáticos vía env.ASSETS, expone /api/*
+  //   y /admin/api/*, y bloquea /cfw/bases/ al público.
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // ⚠️ Marca del sitio: Vexora. El PROYECTO se llama «vexorium» a propósito:
+  // define el link público (vexorium.pages.dev / vexorium.workers.dev).
+  "name": "vexorium",
+
+  // El worker del servidor (ofuscado, generado con «npm run build»)
+  "main": "protected/_worker.js",
+
+  // Súbela si tu versión de Wrangler es más reciente.
+  "compatibility_date": "2026-05-03",
+
+  // Mantener la URL pública vexorium.<tu-subdominio>.workers.dev activa
+  "workers_dev": true,
+  "preview_urls": true,
+
+  // El sitio desplegado vive en protected/ (código OFUSCADO, generado desde
+  // public/ + server/worker.js con «npm run build» — no editar protected/).
+  "assets": {
+    "directory": "./protected",
+    // /cfw/ sirve cfw/index.html y las URLs .html se limpian
+    "html_handling": "auto-trailing-slash",
+    // Rutas desconocidas -> public/404.html con estado 404 real
+    "not_found_handling": "404-page",
+    // El worker va PRIMERO en toda petición (igual que Pages advanced mode
+    // con _worker.js): sirve los estáticos vía env.ASSETS, expone /api/* y
+    // /admin/api/*, y bloquea /cfw/bases/ al público.
+    "run_worker_first": true
+  }
+
+  // Bindings para la ruta Workers (en Pages se configuran en el dashboard:
+  // Settings → Functions → D1 bindings → DB · Settings → Variables → ADMIN_PASSWORD):
+  // "d1_databases": [{ "binding": "DB", "database_name": "vexora-stats", "database_id": "<id>" }],
+  // "vars": { "ADMIN_PASSWORD": "cambia-esto" },
+
+  // Dominio personalizado (opcional): descomenta y ajusta.
+  // Requiere que el dominio use los nameservers de Cloudflare.
+  // "routes": [
+  //   { "pattern": "vexora.tudominio.com", "custom_domain": true }
+  // ]
+}

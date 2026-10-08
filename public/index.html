@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Vexora</title>
+  <meta name="description" content="Vexora — private-use browser client for Segway-Ninebot scooters. No trackers, no third-party cookies." />
+  <meta name="theme-color" content="#0e0e10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="assets/favicon.png?v=1657" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=1657" />
+  <link rel="stylesheet" href="assets/app.css?v=1670" />
+  <style>
+    
+    #vexBoot { position: fixed; inset: 0; z-index: 200; background: #0e0e10; opacity: 1; }
+    #vexBoot.is-done { opacity: 0; pointer-events: none; transition: opacity .18s linear; }
+    #vexBoot[hidden] { display: none !important; }
+  </style>
+</head>
+<body class="is-legal model-g3">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-dc" viewBox="0 0 24 24"><path fill="currentColor" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></symbol>
+    <symbol id="i-tb-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19a8.5 8.5 0 1 1 14 0"/><path d="M12 15.5 16 10.5"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="i-tb-tune" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="15" cy="7" r="2.1" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="2.1" fill="currentColor" stroke="none"/><circle cx="13" cy="17" r="2.1" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="i-tb-cfw" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10.5 10.5h3v3h-3z"/><path d="M9 4v3M15 4v3M9 17v3M15 17v3M4 9h3M4 15h3M17 9h3M17 15h3"/></g></symbol>
+    <symbol id="i-tb-motor" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 6.5 13.5H11L10 21l6.5-10.5H12L13 3z"/></g></symbol>
+    <symbol id="i-tb-guide" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19.5A2.5 2.5 0 0 1 7.5 17H19"/><path d="M7.5 3H19v18H7.5A2.5 2.5 0 0 1 5 18.5v-13A2.5 2.5 0 0 1 7.5 3z"/></g></symbol>
+    <symbol id="i-tb-comm" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15.5 14.7c2.4.2 4.3 1.8 4.9 4.4"/></g></symbol>
+    <symbol id="i-tb-about" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11.5V16"/><path d="M12 8.2h.01"/></g></symbol>
+    <symbol id="i-tb-log" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="m7.5 9.5 3 2.5-3 2.5"/><path d="M12.5 15H16.5"/></g></symbol>
+    <symbol id="i-android" viewBox="0 0 24 24"><path fill="currentColor" d="M7.6 4.2 6.7 2.8c-.06-.1 0-.24.12-.3.1-.06.24-.02.3.08l.9 1.5A6.6 6.6 0 0 1 12 3.4c1.4 0 2.8.24 3.98.68l.9-1.5c.06-.1.2-.14.3-.08.12.06.18.2.12.3l-.9 1.4A5.3 5.3 0 0 1 19 8.4v.6H5v-.6c0-1.8.98-3.3 2.6-4.2zM9.25 7c-.41 0-.75.34-.75.75s.34.75.75.75.75-.34.75-.75S9.66 7 9.25 7zm5.5 0c-.41 0-.75.34-.75.75s.34.75.75.75.75-.34.75-.75S15.16 7 14.75 7zM5 10h14v6.2c0 .99-.81 1.8-1.8 1.8H17v2.3a1.2 1.2 0 0 1-2.4 0V18H9.4v2.3a1.2 1.2 0 0 1-2.4 0V18h-.2c-.99 0-1.8-.81-1.8-1.8V10z"/><path fill="currentColor" d="M2.8 9.6c.66 0 1.2.54 1.2 1.2v3.4a1.2 1.2 0 0 1-2.4 0v-3.4c0-.66.54-1.2 1.2-1.2zm18.4 0c.66 0 1.2.54 1.2 1.2v3.4a1.2 1.2 0 0 1-2.4 0v-3.4c0-.66.54-1.2 1.2-1.2z"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M16.7 12.9c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.75-3.2.75-.7 0-1.7-.73-2.8-.71-1.4.02-2.7.83-3.4 2.1-1.5 2.55-.4 6.3 1 8.4.7 1 1.5 2.1 2.6 2.06 1-.04 1.4-.66 2.7-.66s1.6.66 2.8.64c1.1-.02 1.8-1 2.5-2 .8-1.2 1.1-2.3 1.1-2.4-.02-.01-2.1-.83-2.1-3.3zM14.6 6.7c.6-.7 1-1.7.9-2.7-.9.04-1.9.6-2.5 1.3-.55.6-1 1.7-.9 2.6 1 .1 2-.5 2.5-1.2z"/></symbol>
+  </svg>
+  <div id="vexBoot" role="status" aria-live="polite">
+    <div class="vex-boot">
+      <div class="vex-boot-mark"><img src="assets/mark.png" alt="" /></div>
+      <div class="vex-boot-word">Vexora</div>
+      <div class="vex-boot-bar"><i></i></div>
+      <div class="vex-boot-note" data-i18n="booting">Loading</div>
+    </div>
+  </div>
+<script>
+try {
+  if (localStorage.getItem("vexora.legal") === "1") document.body.classList.remove("is-legal");
+} catch (e) {}
+</script>
+  <div class="app">
+    <header class="top">
+      <div class="top-row">
+        <div class="brand">
+          <img class="logo" src="assets/mark.png" alt="" />
+          Vexora
+          <span class="ver" id="appVer">2.9.0</span>
+        </div>
+        <div class="meta">
+          <span class="sn" id="hdrSn" hidden>—</span>
+          <span class="status-chip">
+            <span class="dot" id="dot"></span>
+            <span id="status">Disconnected</span>
+          </span>
+          <button type="button" class="btn danger sm" id="btnDisc" hidden data-i18n="disconnect">Disconnect</button>
+        </div>
+      </div>
+      <div class="banner" id="discBanner" hidden></div>
+    </header>
+      <nav class="tabs">
+        <button type="button" data-view="dash" class="active"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-link"></use></svg><span data-i18n="tabLink">Link</span></button>
+        <button type="button" data-view="live"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-tune"></use></svg><span data-i18n="tabTune">Tune</span></button>
+        <button type="button" data-view="cfw"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-cfw"></use></svg><span data-i18n="tabCfw">CFW</span></button>
+        <button type="button" data-view="motor"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-motor"></use></svg><span data-i18n="tabMotor">Motor</span></button>
+        <button type="button" data-view="vxfw" hidden><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-cfw"></use></svg><span data-i18n="tabVxfw">VXFW</span></button>
+        <button type="button" data-view="community"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-comm"></use></svg><span data-i18n="tabCommunity">Community</span></button>
+        <button type="button" data-view="about"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-about"></use></svg><span data-i18n="tabAbout">About</span></button>
+        <button type="button" data-view="log"><svg class="tab-ic" aria-hidden="true"><use href="#i-tb-log"></use></svg><span data-i18n="tabLog">Log</span></button>
+      </nav>
+
+    <main class="main">
+      <section class="view active" id="view-dash">
+        <div class="center" id="gate">
+          <img class="logo lg" src="assets/mark.png" alt="Vexora" />
+          <div class="gate-shot">
+            <div class="ring" id="modelRing" aria-hidden="true">
+              <div class="ring-stage">
+                <figure class="ring-tile" style="--a:0deg"><img src="assets/models/g3.png" alt="" /><figcaption>Max G3</figcaption></figure>
+                <figure class="ring-tile" style="--a:72deg"><img src="assets/models/zt3.png" alt="" /><figcaption>ZT3 Pro</figcaption></figure>
+                <figure class="ring-tile" style="--a:144deg"><img src="assets/models/f3.png" alt="" /><figcaption>F3</figcaption></figure>
+                <figure class="ring-tile" style="--a:216deg"><img src="assets/models/gt3.png" alt="" /><figcaption>GT3</figcaption></figure>
+                <figure class="ring-tile" style="--a:288deg"><img src="assets/models/gt3pro.png" alt="" /><figcaption>GT3 Pro</figcaption></figure>
+              </div>
+            </div>
+            <img id="gateShot" src="assets/models/g3.png" alt="" hidden />
+          </div>
+          <h2 id="gateTitle" data-i18n="scanTitle">Find your scooter</h2>
+          <p class="lead" id="gateSub" hidden></p>
+          <p class="lead" id="gateHint" hidden></p>
+          <div class="scan-state"><span class="scan-ring" aria-hidden="true"></span><p class="lead" id="scanStatus" data-i18n="scanIdle">We'll find your scooter nearby</p></div>
+          <p class="help gate-help" data-i18n="gateHelp"></p>
+          <p class="note" id="noBle" hidden data-i18n="chromeBle">Chrome or Edge with Web Bluetooth.</p>
+          <div class="row" id="idleActions" style="justify-content:center">
+            <button type="button" class="btn" id="btnConnect" data-i18n="scanCta">Find my scooter</button>
+            <button type="button" class="btn ghost" id="btnReconnect" hidden data-i18n="reconnect">Reconnect</button>
+            <button type="button" class="btn ghost" id="btnAny" data-i18n="anyBle">Any BLE</button>
+            <button type="button" class="btn ghost" id="btnDemo" data-i18n="demo">Demo</button>
+          </div>
+          <div class="found-card" id="foundCard" hidden>
+            <img id="foundImg" src="assets/models/g3.png" alt="" />
+            <div class="found-meta">
+              <b id="foundName">—</b>
+              <span class="found-sn" id="foundSn">—</span>
+            </div>
+            <button type="button" class="btn" id="foundConnect" data-i18n="connect">Connect</button>
+          </div>
+          <div class="pick" id="modelPick">
+            <div class="pick-strip" id="modelStrip">
+              <button type="button" class="pick-card is-on" data-model="g3"><img src="assets/models/g3.png" alt="" /><b>Max G3</b></button>
+              <button type="button" class="pick-card" data-model="zt3"><img src="assets/models/zt3.png" alt="" /><b>ZT3 Pro</b></button>
+              <button type="button" class="pick-card" data-group="f3"><img src="assets/models/f3.png" alt="" /><b>F3 · F3 Pro</b><span class="pick-chev">&#8250;</span></button>
+              <button type="button" class="pick-card" data-group="e3" disabled><img src="assets/models/e3.png" alt="" /><b>E3 · E3 Pro</b><span class="pick-soon" data-i18n="soon">soon</span></button>
+              <button type="button" class="pick-card" data-model="gt3"><img src="assets/models/gt3.png" alt="" /><b>GT3</b></button>
+              <button type="button" class="pick-card" data-model="gt3pro"><img src="assets/models/gt3pro.png" alt="" /><b>GT3 Pro</b></button>
+            </div>
+            <div class="pick-side">
+              <button type="button" class="pick-nav" id="pickPrev" aria-label="Up">&#708;</button>
+              <button type="button" class="pick-nav" id="pickNext" aria-label="Down">&#709;</button>
+            </div>
+          </div>
+          <div class="pick-which" id="pickWhich" hidden>
+            <span data-i18n="whichOne">Which one is yours?</span>
+            <button type="button" class="btn ghost sm" id="whichA">F3</button>
+            <button type="button" class="btn ghost sm" id="whichB">F3 Pro</button>
+          </div>
+          <div class="gate-links">
+            <button type="button" class="link-quiet" data-view="guide" data-i18n="gateGuideLink">First time? Read the Guide</button>
+            <a class="link-quiet gate-apk" href="assets/Vexora.apk" download><svg class="pi" aria-hidden="true"><use href="#i-android"></use></svg><span data-i18n="gateApp">Get the Android app</span></a>
+          </div>
+        </div>
+        <div id="live" hidden>
+          <div class="cluster">
+            <div class="gauge">
+              <svg viewBox="20 18 260 178" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <path class="g-track" d="M61.67 183.00 A 102 102 0 1 1 238.33 183.00" />
+                <path class="g-fill" id="vGaugeFill" d="M61.67 183.00 A 102 102 0 1 1 238.33 183.00" />
+                <path class="g-ptrack" d="M77.25 174.00 A 84 84 0 1 1 222.75 174.00" />
+                <path class="g-pfill" id="vPowFill" d="M77.25 174.00 A 84 84 0 1 1 222.75 174.00" />
+                <g class="g-ticks">
+                  <line class="g-tick maj" x1="72.06" y1="177.00" x2="54.74" y2="187.00" />
+                  <line class="g-tick" x1="57.90" y1="150.80" x2="44.18" y2="153.60" />
+                  <line class="g-tick maj" x1="60.66" y1="121.15" x2="40.80" y2="118.74" />
+                  <line class="g-tick" x1="65.08" y1="91.70" x2="52.43" y2="85.70" />
+                  <line class="g-tick maj" x1="85.09" y1="69.65" x2="70.67" y2="55.80" />
+                  <line class="g-tick" x1="106.32" y1="48.77" x2="99.81" y2="36.37" />
+                  <line class="g-tick maj" x1="135.56" y1="43.17" x2="132.35" y2="23.42" />
+                  <line class="g-tick" x1="165.08" y1="39.22" x2="167.32" y2="25.40" />
+                  <line class="g-tick maj" x1="191.83" y1="52.31" x2="201.12" y2="34.60" />
+                  <line class="g-tick" x1="217.79" y1="66.88" x2="227.89" y2="57.19" />
+                  <line class="g-tick maj" x1="231.31" y1="93.42" x2="249.38" y2="84.84" />
+                  <line class="g-tick" x1="243.31" y1="120.67" x2="257.21" y2="118.98" />
+                  <line class="g-tick maj" x1="227.94" y1="177.00" x2="245.26" y2="187.00" />
+                </g>
+                <text class="g-lab" x="84.2" y="170.0">0</text>
+                <text class="g-lab" x="74.6" y="122.8">20</text>
+                <text class="g-lab" x="95.2" y="79.4">40</text>
+                <text class="g-lab" x="137.8" y="57.0">60</text>
+                <text class="g-lab" x="185.3" y="64.7">80</text>
+                <text class="g-lab" x="218.7" y="99.4">100</text>
+                <text class="g-lab" x="215.8" y="170.0">130</text>
+                <circle id="vLimPip" class="g-lim" cx="61.67" cy="183" r="4" />
+              </svg>
+              <div class="readout">
+                <div class="speed"><span id="vSpeed">0.0</span><small id="vSpdUnit">km/h</small></div>
+                <div class="watts" id="vWatts"><span id="vPow">—</span><small>W</small></div>
+              </div>
+            </div>
+            <p class="sess" id="vSess">—</p>
+            <p class="meta-line"><span class="pill" id="vMode">—</span><span class="pill" id="vLock">—</span><span class="pill" id="vFlow" hidden>—</span><span id="vLimit">—</span><span id="vName">—</span></p>
+            <div class="row wrap hud-actions" style="justify-content:center;margin-top:10px">
+              <button type="button" class="btn ghost sm" id="btnHud" data-i18n="hud">HUD</button>
+              <button type="button" class="btn ghost sm" id="btnSafe25" data-i18n="safe25">Safe 25</button>
+              <button type="button" class="btn ghost sm" id="btnLinkLight" data-i18n="light">Light</button>
+              <button type="button" class="btn ghost sm" id="btnLinkMode" data-i18n="mode">Mode</button>
+            </div>
+            <div class="trip">
+              <div class="trip-bar">
+                <span class="trip-dot" aria-hidden="true"></span>
+                <div class="trip-meta">
+                  <b data-i18n="tripRec">Trip recording</b>
+                  <span><span id="vTripPts">0</span> <span data-i18n="tripPts">datapoints</span></span>
+                </div>
+                <span class="trip-time" id="vTripTime">00:00</span>
+                <button type="button" class="btn ghost sm" id="btnTripRec">Start</button>
+                <button type="button" class="btn ghost sm" id="btnTripReset">Reset</button>
+                <button type="button" class="btn ghost sm" id="btnTripCsv">CSV</button>
+              </div>
+              <canvas id="vSpark" class="spark" width="280" height="44"></canvas>
+              <div class="trip-grid">
+                <div><b id="vTripKm">0.00</b><span id="vTripKmU">km</span></div>
+                <div><b id="vMaxSpd">—</b><span id="vMaxSpdU">max km/h</span></div>
+                <div><b id="vMaxPow">—</b><span>max W</span></div>
+                <div><b id="vAvgSpd">—</b><span id="vAvgSpdU">avg km/h</span></div>
+              </div>
+              <canvas id="vChart" class="ridechart" width="560" height="180"></canvas>
+              <div class="card fold is-open" id="tripHistCard" style="margin-top:10px">
+                <h3 data-i18n="tripsT">Saved trips</h3>
+                <div class="actions">
+                  <button type="button" class="btn ghost sm" id="btnTripsLive" data-i18n="tripLive">Live</button>
+                  <button type="button" class="btn ghost sm" id="btnTripsJson">JSON</button>
+                  <button type="button" class="btn ghost sm" id="btnTripsCsv">CSV</button>
+                  <button type="button" class="btn ghost sm" id="btnTripsClear" data-i18n="tripClear">Clear</button>
+                </div>
+                <div id="tripList"></div>
+              </div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="n"><span id="vAmp">—</span><small>A</small></div>
+              <div class="l" data-i18n="current">Current</div>
+            </div>
+            <div class="stat">
+              <div class="n"><span id="vVolt">—</span><small>V</small></div>
+              <div class="l" data-i18n="voltage">Voltage</div>
+            </div>
+            <div class="stat" id="statBat">
+              <div class="n"><span id="vBat">—</span><small>%</small></div>
+              <div class="l" data-i18n="battery">Battery</div>
+              <div class="bat"><i id="vBatBar"></i></div>
+            </div>
+            <div class="stat">
+              <div class="n"><span id="vRange">—</span><small id="vRangeU">km</small></div>
+              <div class="l" data-i18n="range">Range</div>
+            </div>
+            <div class="stat" id="statVcu">
+              <div class="n"><span id="vTemp">—</span><small>°C</small></div>
+              <div class="l">VCU</div>
+            </div>
+            <div class="stat">
+              <div class="n"><span id="vMtemp">—</span><small>°C</small></div>
+              <div class="l" data-i18n="motor">Motor</div>
+            </div>
+            <div class="stat">
+              <div class="n"><span id="vOdo">—</span><small id="vOdoU">km</small></div>
+              <div class="l" data-i18n="odo">Odo</div>
+            </div>
+            <div class="stat">
+              <div class="n"><span id="vMaxPowStat">—</span><small>W</small></div>
+              <div class="l" data-i18n="peak">Peak</div>
+            </div>
+            <div class="stat">
+              <div class="n"><span id="vEta">—</span></div>
+              <div class="l">ETA</div>
+            </div>
+          </div>
+          <p class="dash-note" data-i18n="dashNote">This data may be inaccurate.</p>
+          <div class="card fold" id="packCard">
+            <h3><span>Pack</span> <span class="fold-hint" data-i18n="hintCells">Cells</span></h3>
+            <div class="kv">
+              <div><span data-i18n="tState">State</span><b id="vPackState">—</b></div>
+              <div><span data-i18n="tCycles">Cycles</span><b id="vCycles">—</b></div>
+              <div><span data-i18n="tHealth">Health</span><b id="vSoh">—</b></div>
+              <div><span data-i18n="tCells">Cells</span><b id="vCellSpan">—</b></div>
+              <div><span data-i18n="tBmsC">BMS °C</span><b id="vBmsTemp">—</b></div>
+            </div>
+            <div class="cells" id="vCells"></div>
+          </div>
+        </div>
+        <div class="card cble" data-cble="1">
+          <h3><span data-i18n="cbleT">Custom BLE</span><span class="cble-tag">G3 · F3</span></h3>
+          <p class="note" data-i18n="cbleP">Max G3 and F3 Pro take custom BLE payloads. Build them in Vexora Studio — the official studio page — then flash them here.</p>
+          <div class="actions">
+            <a class="btn" id="btnStudio" href="https://vexora.printspace.at/" target="_blank" rel="noopener noreferrer" referrerpolicy="strict-origin" data-i18n="cbleBtn">Open Vexora Studio</a>
+          </div>
+          <p class="note" data-i18n="cbleN">Custom BLE is for models with an unlocked BLE stack. Flashing stays at your own risk.</p>
+        </div>
+      </section>
+
+      <section class="view" id="view-live">
+        <header class="page-head">
+          <h2>Tune</h2>
+          <button type="button" class="link-quiet sm" data-view="guide" data-i18n="gateGuideLink">First time? Read the Guide</button>
+          <p class="lead" id="liveReady" data-i18n="connectFirst">Connect first.</p>
+        </header>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="tIdentity">Scooter data</h3>
+          <div class="kv">
+            <div><span>SN</span><b id="liveSn">—</b></div>
+            <div><span data-i18n="tMode">Mode</span><b id="liveMode">—</b></div>
+            <div><span data-i18n="tLock">Lock</span><b id="liveLock">—</b></div>
+            <div><span>VCU</span><b id="liveVer">—</b></div>
+            <div><span>MCU</span><b id="liveMcu">—</b></div>
+            <div><span>BLE</span><b id="liveBle">—</b></div>
+            <div><span>BMS</span><b id="liveBms">—</b></div>
+          </div>
+          <div class="actions"><button type="button" class="btn ghost sm" id="btnCopySn" data-i18n="bCopySn">Copy SN</button></div>
+        </div>
+
+        <div class="card fold" data-g3-only="1" id="liveProfCard">
+          <h3 data-i18n="tCombo">Secret combo</h3>
+          <div class="row wrap">
+            <button type="button" class="btn ghost sm" data-step="1" data-i18n="sBrakeR">Brake right</button>
+            <button type="button" class="btn ghost sm" data-step="2" data-i18n="sBrakeL">Brake left</button>
+            <button type="button" class="btn ghost sm" data-step="4">Power</button>
+            <button type="button" class="btn ghost sm" data-step="5" data-i18n="sMode">Mode</button>
+            <button type="button" class="btn ghost sm" data-step="6" data-i18n="sSignalL">Signal left</button>
+            <button type="button" class="btn ghost sm" data-step="7" data-i18n="sSignalR">Signal right</button>
+            <button type="button" class="btn ghost sm" data-step="8" data-i18n="sCustom">Custom</button>
+            <button type="button" class="btn ghost sm" id="btnPatClear" data-i18n="bClear">Clear</button>
+          </div>
+          <div class="swatch" id="livePat"></div>
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px 16px;align-items:center;margin-top:14px">
+            <span></span>
+            <span class="k" style="text-align:center" data-i18n="lStd">Standard</span>
+            <span class="k" style="text-align:center" data-i18n="lTun">Tuning</span>
+            <span class="k" data-i18n="tSpeed">Speed</span>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button type="button" class="btn ghost sm" data-std="22" data-i18n="sGermany">Germany 22</button>
+              <button type="button" class="btn ghost sm is-on" data-std="25" data-i18n="sEurope">Europe 25</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button type="button" class="btn ghost sm is-on" data-tun="45">US 45</button>
+              <button type="button" class="btn ghost sm" data-tun="100" data-locked data-i18n="sUncappedSoon" disabled title="Coming soon">Uncapped 100 · soon</button>
+            </div>
+            <span class="k" data-i18n="fUnderglow">Underglow</span>
+            <label class="sw" style="justify-self:center;padding:4px 0"><input type="checkbox" id="p-std-ug" /><i></i></label>
+            <label class="sw" style="justify-self:center;padding:4px 0"><input type="checkbox" id="p-tun-ug" checked /><i></i></label>
+            <span class="k" data-i18n="fFrontBar">Front bar</span>
+            <label class="sw" style="justify-self:center;padding:4px 0"><input type="checkbox" id="p-std-bar" /><i></i></label>
+            <label class="sw" style="justify-self:center;padding:4px 0"><input type="checkbox" id="p-tun-bar" checked /><i></i></label>
+            <span class="k" data-i18n="lCruise">Cruise</span>
+            <label class="sw" style="justify-self:center;padding:4px 0"><input type="checkbox" id="p-std-cr" /><i></i></label>
+            <label class="sw" style="justify-self:center;padding:4px 0"><input type="checkbox" id="p-tun-cr" checked /><i></i></label>
+          </div>
+          <input type="hidden" id="p-std" value="25" />
+          <input type="hidden" id="p-tun" value="100" />
+          <div class="actions">
+            <button type="button" class="btn" id="btnLiveSave" data-i18n="bSaveCombo">Save combo</button>
+            <button type="button" class="btn ghost" id="btnLiveStd" data-i18n="bUseStd">Use Standard</button>
+            <button type="button" class="btn ghost" id="btnLiveTun" data-i18n="bUseTun">Use Tuning</button>
+          </div>
+          <p class="note" id="liveProfNote"></p>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="tSpeed">Speed</h3>
+          <div class="seg">
+            <button type="button" data-mode="police22" data-i18n="modeP22">Police 22</button>
+            <button type="button" data-mode="police25" data-i18n="modeP25">Police 25</button>
+            <button type="button" data-mode="race" data-i18n="modeRace">Race</button>
+          </div>
+          <div class="ctrl" style="margin-top:16px">
+            <label>Eco</label><span class="val"><span id="limEcoNum">13</span> km/h</span>
+            <input id="limEco" type="range" min="6" max="130" value="13" />
+          </div>
+          <div class="ctrl">
+            <label>Drive</label><span class="val"><span id="limDriveNum">20</span> km/h</span>
+            <input id="limDrive" type="range" min="6" max="130" value="20" />
+          </div>
+          <div class="ctrl">
+            <label>Sport</label><span class="val"><span id="limNum">25</span> km/h</span>
+            <input id="limRange" type="range" min="6" max="130" value="25" />
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lMotorStart">Motor start</label><span class="val"><span id="startNum">0</span> km/h</span>
+            <input id="liveStart" type="range" min="0" max="5" value="0" />
+          </div>
+          <div class="actions">
+            <button type="button" class="btn" id="btnApplyLim" data-i18n="bApply">Apply</button>
+          </div>
+          <p class="note" id="limNote"></p>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="tSaved">Saved setups</h3>
+          <div class="ctrl">
+            <label data-i18n="presetName">Name</label>
+            <input id="presetName" type="text" maxlength="24" placeholder="daily" style="grid-column:1/-1;background:#0c0c0e;color:inherit;border:1px solid var(--line);border-radius:8px;padding:8px 10px" />
+          </div>
+          <select id="presetList" style="width:100%;background:#0c0c0e;color:inherit;border:1px solid var(--line);border-radius:8px;padding:8px"></select>
+          <div class="actions">
+            <button type="button" class="btn sm" id="btnPresetSave" data-i18n="save">Save</button>
+            <button type="button" class="btn ghost sm" id="btnPresetLoad" data-i18n="load">Load</button>
+            <button type="button" class="btn ghost sm" id="btnPresetExp" data-i18n="export">Export</button>
+            <button type="button" class="btn ghost sm" id="btnPresetImp" data-i18n="import">Import</button>
+            <button type="button" class="btn ghost sm" id="btnSharePreset" data-i18n="sharePreset">Share</button>
+            <button type="button" class="btn ghost sm" id="btnApplyAll" data-i18n="applyAll">Apply all</button>
+          </div>
+          <input id="presetFile" type="file" accept="application/json" />
+        </div>
+
+        <div class="card fold" data-g3-only="1">
+          <h3><span data-i18n="tLights">Lights</span> <span class="fold-hint" data-i18n="hintDeck">Deck</span></h3>
+          <div class="swatch dense">
+            <label class="sw"><input type="checkbox" data-flag="underglow" /><i></i><span data-i18n="fUnderglow">Underglow</span></label>
+            <label class="sw"><input type="checkbox" data-flag="frontPositionLamp" /><i></i><span data-i18n="fFrontBar">Front bar</span></label>
+            <label class="sw"><input type="checkbox" data-flag="autoHeadlight" /><i></i><span data-i18n="fAutoBeam">Auto beam</span></label>
+            <label class="sw"><input type="checkbox" data-flag="tailBreathing" /><i></i><span data-i18n="fChargePulse">Charge pulse</span></label>
+          </div>
+          <div class="row wrap">
+            <span class="k" data-i18n="lTail">Rear light</span>
+            <button type="button" class="btn ghost sm" data-tail="0" data-i18n="bSolid">Solid</button>
+            <button type="button" class="btn ghost sm" data-tail="1" data-i18n="bBlink">Blink</button>
+          </div>
+          <div class="actions"><button type="button" class="btn ghost sm" id="btnUgBoot" data-i18n="bUgBoot">Underglow on start</button></div>
+          <p class="note" id="liveLightNote" data-i18n="noteLight"></p>
+        </div>
+
+        <div class="card fold">
+          <h3><span data-i18n="tRide">Riding</span> <span class="fold-hint">Boost · KERS</span></h3>
+          <div class="swatch dense">
+            <label class="sw"><input type="checkbox" data-flag="walkMode" /><i></i><span data-i18n="fWalk">Walk</span></label>
+            <label class="sw"><input type="checkbox" data-flag="tcs" /><i></i><span>TCS</span></label>
+            <label class="sw"><input type="checkbox" data-flag="unlockSports" /><i></i><span data-i18n="fUnlockSport">Unlock Sport</span></label>
+            <label class="sw"><input type="checkbox" data-flag="boostFunc" /><i></i><span>Boost</span></label>
+            <label class="sw"><input type="checkbox" data-flag="parkOnSlope" /><i></i><span data-i18n="fPark">Park on slope</span></label>
+            <label class="sw"><input type="checkbox" data-flag="driveModeEn" /><i></i><span data-i18n="fDriveEn">Drive enabled</span></label>
+            <label class="sw"><input type="checkbox" data-flag="sportsModeEn" /><i></i><span data-i18n="fSportEn">Sport enabled</span></label>
+          </div>
+          <div class="ctrl" style="margin-top:14px">
+            <label data-i18n="lVolume">Volume</label><span class="val"><span id="volNum">50</span>%</span>
+            <input id="liveVol" type="range" min="5" max="100" value="50" />
+          </div>
+          <div class="row wrap">
+            <span class="k">KERS</span>
+            <button type="button" class="btn ghost sm" data-kers="0" data-i18n="kOff">Off</button>
+            <button type="button" class="btn ghost sm" data-kers="1" data-i18n="kWeak">Weak</button>
+            <button type="button" class="btn ghost sm" data-kers="2" data-i18n="kStd">Std</button>
+          </div>
+          <p class="warn" id="kersWarn" data-i18n="kersWarn"></p>
+          <p class="warn" id="boostWarn" data-i18n="boostWarn"></p>
+          <p class="note" id="liveRideNote"></p>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="tBattery">Battery</h3>
+          <div class="ctrl">
+            <label data-i18n="lChargeLimit">Charge limit</label><span class="val"><span id="chgNum">100</span>%</span>
+            <input id="liveChg" type="range" min="80" max="100" value="100" />
+          </div>
+          <div class="actions">
+            <button type="button" class="btn" id="btnChargeNow" data-i18n="bChargeNow">Charge now</button>
+          </div>
+          <p class="note" data-i18n="bChargeNowN"></p>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="tSystem">System</h3>
+          <div class="ctrl">
+            <label data-i18n="lPowerOff">Auto power-off</label><span class="val"><span id="offNum">5</span> min</span>
+            <input id="liveOff" type="range" min="1" max="30" value="5" />
+          </div>
+          <div class="swatch dense">
+            <label class="sw"><input type="checkbox" data-flag="turnSounds" /><i></i><span data-i18n="fTurnSounds">Turn sounds</span></label>
+            <label class="sw"><input type="checkbox" data-flag="appSounds" /><i></i><span data-i18n="fAppSounds">App sounds</span></label>
+            <label class="sw"><input type="checkbox" data-flag="alarm" /><i></i><span data-i18n="fAlarm">Alarm</span></label>
+            <label class="sw"><input type="checkbox" data-flag="powerOffOnFold" /><i></i><span data-i18n="fOffFold">Off when folded</span></label>
+            <label class="sw"><input type="checkbox" data-flag="disableAlarmOnFold" /><i></i><span data-i18n="fNoAlarmFold">No alarm folded</span></label>
+            <label class="sw"><input type="checkbox" id="liveRangeDisp" /><i></i><span data-i18n="fRange">Show remaining range</span></label>
+          </div>
+          <p class="k" style="margin-top:14px" data-i18n="subDisplay">Display</p>
+          <div class="row wrap" id="dashData">
+            <button type="button" class="btn ghost sm" data-dash="1" data-i18n="dTrip">Trip</button>
+            <button type="button" class="btn ghost sm" data-dash="2" data-i18n="dOdo">Odo</button>
+            <button type="button" class="btn ghost sm" data-dash="3" data-i18n="dMotorC">Motor °C</button>
+            <button type="button" class="btn ghost sm" data-dash="4" data-i18n="dCurrent">Current</button>
+            <button type="button" class="btn ghost sm" data-dash="5" data-i18n="dPower">Power</button>
+            <button type="button" class="btn ghost sm" data-dash="6" data-i18n="dAvg">Avg</button>
+            <button type="button" class="btn ghost sm" data-dash="7" data-i18n="dTime">Time</button>
+          </div>
+          <p class="note" id="liveSysNote"></p>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="tDiag">Diagnostics</h3>
+          <div class="actions">
+            <button type="button" class="btn" id="btnDiag" data-i18n="bRead">Read</button>
+            <button type="button" class="btn ghost" id="btnDiagCopy" data-i18n="bCopy">Copy</button>
+          </div>
+          <pre class="diag" id="diagOut">Connect, then Read.</pre>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="tCbtn">Extra button</h3>
+          <div class="row">
+            <button type="button" class="btn ghost sm" data-cbtn="emergencyFlasher" data-i18n="cbHazards">Hazards</button>
+            <button type="button" class="btn ghost sm" data-cbtn="energyRecovery" data-i18n="cbKers">KERS</button>
+            <button type="button" class="btn ghost sm" data-cbtn="boost">Boost</button>
+            <button type="button" class="btn ghost sm" data-cbtn="customSound" data-i18n="cbSound">Sound</button>
+          </div>
+          <p class="note" id="liveBtnNote"></p>
+        </div>
+      </section>
+
+            <section class="view" id="view-cfw">
+        <header class="page-head">
+          <h2 data-i18n="tabCfw">CFW</h2>
+          <button type="button" class="link-quiet sm" data-view="guide" data-i18n="gateGuideLink">First time? Read the Guide</button>
+          <p class="lead" data-i18n="hCfw"></p>
+        </header>
+        <div class="card fold is-open" id="vxfwGate">
+          <h3><span data-i18n="tVxfwGate">VXFW · Vexora custom firmware</span> <span class="fold-hint" id="vxfwGateHint">&mdash;</span></h3>
+          <p class="note" id="vxfwGateNote" data-i18n="vxfwConnect">Connect your scooter to check.</p>
+          <div class="actions" id="vxfwGateAct" style="display:none">
+            <button type="button" class="btn" id="btnVxfwBest" data-i18n="bVxfwBest">Flash VXFW &mdash; best tune (MCU + VCU)</button>
+          </div>
+        </div>
+        <div class="card fold is-open" data-nocfw="1">
+          <h3 data-i18n="naFlashT">Flashing</h3>
+          <p class="note" data-i18n="naFlash">Not available for this model yet.</p>
+        </div>
+        <div class="card fold is-open" data-zt3-only="1">
+          <h3 data-i18n="tCfwVcu">ZT3 controller firmware</h3>
+          <p class="warn" data-i18n="zt3Note"></p>
+          <p class="warn" data-i18n="zt3BugPower"></p>
+          <p class="note" data-i18n="zt3BugTemp"></p>
+          <p class="note" data-i18n="zt3BugModes"></p>
+          <p class="note" data-i18n="zt3BugUnlock"></p>
+          <div class="actions"><button type="button" class="btn" id="btnVcuZt3" data-i18n="bFlashVcu">Flash controller</button></div>
+        </div>
+        <div class="card fold is-open" data-g3-only="1" id="cockpitCard">
+          <h3 data-i18n="tCockpitT">Sounds &amp; cockpit (beta)</h3>
+          <div class="actions">
+            <button type="button" class="btn" id="btnHorn" data-i18n="bHorn">Horn</button>
+            <button type="button" class="btn ghost" id="btnPlaySnd" data-i18n="bPlay">Play</button>
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lSndId">Sound ID</label><span class="val" id="sndIdVal">1</span>
+            <input id="sndId" type="range" min="1" max="30" step="1" value="1" />
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lVoiceVol">Voice volume</label><span class="val" id="vvolVal">60%</span>
+            <input id="vvol" type="range" min="5" max="100" step="5" value="60" />
+          </div>
+          <div class="actions"><button type="button" class="btn ghost" id="btnVolApply" data-i18n="bVolApply">Apply volume</button></div>
+          <div class="ctrl">
+            <label data-i18n="lDashItem">Dash shows</label><span class="val"></span>
+            <div class="seg" id="segDash">
+              <button type="button" data-dash="1">Trip</button>
+              <button type="button" data-dash="2">Wh</button>
+              <button type="button" data-dash="3">Temp</button>
+              <button type="button" data-dash="4">A</button>
+              <button type="button" data-dash="5">W</button>
+              <button type="button" data-dash="6">Avg</button>
+              <button type="button" data-dash="7">Time</button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lAccel">Acceleration</label><span class="val"></span>
+            <div class="seg" id="segAcc">
+              <button type="button" data-acc="1">Eco</button>
+              <button type="button" data-acc="2" class="is-on">Std</button>
+              <button type="button" data-acc="3">Max</button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lChgLimit">Charge limit</label><span class="val" id="chgVal">95%</span>
+            <input id="chg" type="range" min="50" max="100" step="5" value="95" />
+          </div>
+          <div class="actions"><button type="button" class="btn ghost" id="btnChgApply" data-i18n="bCockpitApply">Apply charge limit</button></div>
+          <p class="note" id="cockpitOut" data-i18n="noteCockpit"></p>
+        </div>
+        <div class="card fold is-open" data-g3-only="1" id="uidsCard">
+          <h3 data-i18n="tUidsCard">Device UIDs</h3>
+          <div class="actions"><button type="button" class="btn ghost" id="btnReadUids" data-i18n="bReadUids">Read UIDs from scooter</button></div>
+          <p class="note" id="uidOut" data-i18n="uidsIdle"></p>
+        </div>
+        <div class="card fold is-open" data-g3-only="1" id="odoCard">
+          <h3 data-i18n="tOdoCard">Odometer (beta)</h3>
+          <div class="ctrl">
+            <label data-i18n="lOdoKm">Your real km now</label><span class="val">km</span>
+            <input id="odoKm" type="number" min="1" max="999999" step="1" placeholder="5500" />
+          </div>
+          <div class="actions"><button type="button" class="btn ghost" id="btnOdoFind" data-i18n="bOdoFind">Locate register</button></div>
+          <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.09);padding-top:12px">
+            <div class="ctrl">
+              <label data-i18n="lOdoSet">Set km (up only)</label><span class="val" id="odoNow">—</span>
+              <input id="odoNew" type="number" min="0.1" max="999999" step="0.1" placeholder="9999" />
+            </div>
+            <div class="actions">
+              <button type="button" class="btn ghost" id="btnOdoRead2" data-i18n="bOdoRead">Read current</button>
+              <button type="button" class="btn ghost" id="btnOdoSet" data-i18n="bOdoSet">Set odometer</button>
+            </div>
+              <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="btnOdoRevert" data-i18n="bOdoRevert">Revert to original</button></div>
+              <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="btnOdoDiag" data-i18n="bOdoDiag">Write diagnostic (+0.1 km)</button></div>
+            <p class="note" data-i18n="odoRule"></p>
+            <p class="note" data-i18n="odoBle"></p>
+            <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.09);padding-top:12px">
+              <p class="help" data-i18n="hOdoPatch"></p>
+              <div class="actions">
+                <button type="button" class="btn ghost" id="btnOdoPick" data-i18n="lOdoPick">Choose dump (.bin)</button>
+                <button type="button" class="btn ghost" id="btnOdoPatch" data-i18n="bOdoPatch">Patch dump</button>
+              </div>
+              <input id="odoFile" type="file" accept=".bin" />
+              <p class="note" id="odoPName"></p>
+            </div>
+          </div>
+          <p class="note" id="odoOut" data-i18n="odoIdle"></p>
+        </div>
+        <div class="card fold is-open" id="devUnlockCard" style="display:none">
+          <h3><span data-i18n="tDevUnlock">Unlock a locked controller</span> <span class="fold-hint">advanced</span></h3>
+          <p class="help" data-i18n="hDevUnlock"></p>
+          <div class="ctrl">
+            <label>device key</label><span class="val">16 B hex</span>
+            <input id="devKey" type="text" placeholder="32 hex characters" maxlength="32" autocomplete="off" spellcheck="false" />
+          </div>
+          <div class="actions"><button type="button" class="btn ghost" id="btnVcuDevKey" data-i18n="bDevUnlock">Flash unlock with this key</button></div>
+          <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost" id="btnCopyPair" data-i18n="bCopyPair">Copy UID+key pair (share)</button></div>
+          <p class="note" data-i18n="uidFlow"></p>
+        </div>
+        <div data-vxfw-lock="1" class="card fold is-open" data-g3-only="1" id="cfwSpeedCard">
+          <h3 data-i18n="tCfwSpeed">Speed limits</h3>
+          <p class="note" id="cfwBaseNote"></p>
+          <div id="cfwLegal">
+            <div class="seg">
+              <button type="button" data-pstd="22" data-i18n="sGermany">Germany 22</button>
+              <button type="button" data-pstd="25" class="is-on" data-i18n="sEurope">Europe 25</button>
+            </div>
+            <p class="note" style="margin-top:12px" data-i18n="subLegal">Legal</p>
+            <div class="ctrl">
+              <label>Eco</label><span class="val"><span data-for="n-eco">16</span> km/h</span>
+              <input id="n-eco" type="range" min="5" max="30" value="16" />
+            </div>
+            <div class="ctrl">
+              <label>Drive</label><span class="val"><span data-for="n-drive">25</span> km/h</span>
+              <input id="n-drive" type="range" min="5" max="30" value="25" />
+            </div>
+            <div class="ctrl">
+              <label>Sport</label><span class="val"><span data-for="n-sport">25</span> km/h</span>
+              <input id="n-sport" type="range" min="5" max="30" value="25" />
+            </div>
+            <div class="ctrl">
+              <label data-i18n="lSpoof">Version spoof (VCU)</label>
+              <input id="spoofVcu" type="text" inputmode="decimal" placeholder="default" maxlength="8" style="max-width:120px" />
+            </div>
+            <p class="note" data-i18n="hSpoof">Optional: report a different VCU firmware version (e.g. 1.5.8) so the scooter looks stock to any tool. Format x.y.z — leave empty for 5.1.1.</p>
+          </div>
+          <p class="note" data-i18n="hTunInApp">Tuning profile: set it up in the app after flashing.</p>
+        </div>
+        <div class="card fold is-open" data-g3-only="1" data-vxfw-lock="1">
+          <h3 data-i18n="tProfiles">Profiles &amp; secret combo</h3>
+          <p class="note" id="cfwSum">Profiles · STD 25 · TUN 100 km/h</p>
+          <div class="actions" style="margin-top:8px"><button type="button" class="btn ghost sm" id="btnShareTune" data-i18n="shareTune">Share my tune</button></div>
+        </div>
+        <div class="card" data-g3-only="1" data-vxfw-lock="1" id="cfwFlashCard">
+          <p class="note" id="preFlash" hidden></p>
+          <div class="actions" style="margin-top:0"><button type="button" class="btn" id="btnVcu" data-i18n="bFlashVcu">Flash controller</button></div>
+        </div>
+        <div class="card fold is-open" data-stock-only="1" id="cfwRestoreCard">
+          <h3 data-i18n="restoreT">Stock restore</h3>
+          <div class="actions">
+            <button type="button" class="btn ghost" id="btnVcuUnlock" data-i18n="bUnlockFw" hidden>Recover locked flash (VCU)</button>
+            <button type="button" class="btn ghost" id="btnMcuUnlock" data-i18n="bUnlockMcu" hidden>Recover locked flash (MCU)</button>
+          </div>
+          <p class="help" id="unlockHelp" data-i18n="unlockHelp" hidden></p>
+          <p class="note" id="unlockCredit" data-i18n="unlockCredit" hidden></p>
+          <p class="note" id="restoreNote"></p>
+        </div>
+        <div class="card fold">
+          <h3 data-i18n="history">History</h3>
+          <div class="kv kv-stack" id="flashHist">—</div>
+        </div>
+        
+              </section>
+      <section class="view" id="view-motor">
+        <header class="page-head">
+          <h2 data-i18n="tabMotor">Motor</h2>
+          <button type="button" class="link-quiet sm" data-view="guide" data-i18n="gateGuideLink">First time? Read the Guide</button>
+          <p class="lead" data-i18n="hMcu"></p>
+        </header>
+        <div class="card fold is-open" data-nocfw="1">
+          <h3 data-i18n="naFlashT">Flashing</h3>
+          <p class="note" data-i18n="naFlash">Not available for this model yet.</p>
+        </div>
+        <div class="card fold is-open" data-flash-only="1" data-vxfw-lock="1">
+          <h3><span data-i18n="tMcu">Motor profile</span> <span class="fold-hint" data-i18n="hintFirst">Flash first</span></h3>
+          <p class="note" id="motorCfwState"></p>
+          <p class="note" data-i18n="noteMcu"></p>
+          <div class="seg">
+            <button type="button" id="presetSafe" class="is-on">Safe</button>
+            <button type="button" id="presetBest">Balanced</button>
+            <button type="button" id="presetChill">Chill</button>
+            <button type="button" id="presetStock" data-i18n="bStockFw">Original firmware</button>
+            <button type="button" id="presetUltra">Unsafe · 327</button>
+            <button type="button" id="presetUltraPlus">Unsafe+ · 900</button>
+          </div>
+          <p class="warn" data-i18n="otaNote"></p>
+        </div>
+        <div data-vxfw-lock="1" class="card fold is-open" id="panelFwk" data-flash-only="1">
+          <h3><span data-i18n="tFwk">High-speed power</span> <span class="fold-hint">iqFW</span></h3>
+          <p class="note" data-i18n="fwNote"></p>
+          <div class="ctrl">
+            <label>iqFW</label><span class="val"><span data-for="mcu-cap">115</span> A</span>
+            <input id="mcu-cap" type="range" min="10" max="150" value="70" />
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lEngage">Starts at</label><span class="val"><span data-for="mcu-engage">28</span> km/h</span>
+            <input id="mcu-engage" type="range" min="0" max="200" value="28" />
+          </div>
+          <div class="ctrl">
+            <label data-i18n="lScale">Strength</label><span class="val"><span data-for="mcu-scale">2300</span></span>
+            <input id="mcu-scale" type="range" min="256" max="4095" value="2300" />
+          </div>
+          <div class="actions"><button type="button" class="btn" id="btnMcu" data-i18n="bFlashMcu">Flash motor profile</button></div>
+        </div>
+        <div data-vxfw-lock="1" class="card fold is-open" id="panelUltra" data-flash-only="1" hidden>
+          <h3 data-i18n="tUltra">Extra peak power</h3>
+          <div class="ctrl">
+            <label data-i18n="lPeak">Peak current</label><span class="val"><span data-for="mcu-punta">327</span></span>
+            <input id="mcu-punta" type="range" min="200" max="2000" value="327" />
+          </div>
+          <div class="actions"><button type="button" class="btn" id="btnMcuUltra" data-i18n="bFlashUltra">Flash extra power</button></div>
+        </div>
+        <div data-vxfw-lock="1" class="card fold is-open" id="panelDpc4" data-flash-only="1" hidden>
+          <h3><span data-i18n="tVxfw">VXFW · DPC pow4</span> <span class="fold-hint">G3</span></h3>
+          <p class="note" data-i18n="nVxfw"></p>
+          <div class="actions"><button type="button" class="btn" id="btnMcuDpc4" data-i18n="bVxfw">Flash VXFW · DPC</button></div>
+        </div>
+        <div data-vxfw-lock="1" class="card fold is-open">
+          <h3><span data-i18n="tLiveMotor">Fine tuning while you ride</span> <span class="fold-hint" data-i18n="hintTopThrottle">Top speed · throttle</span></h3>
+          <canvas id="mChart" class="spark" width="280" height="72"></canvas>
+          <div class="ctrl">
+            <label data-i18n="lFoldback">Heat cut-off</label><span class="val"><span data-for="foldback">105</span></span>
+            <input id="foldback" type="range" min="80" max="120" value="105" />
+          </div>
+          <p class="note" data-i18n="nStopped"></p>
+          <div class="ctrl">
+            <label data-i18n="lTopSpeed">Top speed</label><span class="val"><span id="topNum">0</span>% · ≈<span id="topKmh">45</span> km/h</span>
+            <input id="mLiveTop" type="range" min="0" max="100" step="5" value="0" />
+          </div>
+          <div class="row wrap">
+            <button type="button" class="btn ghost sm" data-top="0" data-i18n="bStock">Stock</button>
+            <button type="button" class="btn ghost sm" data-top="50" data-i18n="bTopMid">+mid</button>
+            <button type="button" class="btn ghost sm" data-top="100" data-i18n="bTopMax">+max</button>
+            <button type="button" class="btn" id="btnTopApply" data-i18n="bApply">Apply</button>
+          </div>
+          <p class="note" data-i18n="nRam"></p>
+          <div class="row wrap" style="margin-top:14px">
+            <span class="k" data-i18n="lThrottle">Throttle</span>
+            <button type="button" class="btn ghost sm" data-accel="1" data-i18n="bSmooth">Smooth</button>
+            <button type="button" class="btn ghost sm" data-accel="2" data-i18n="kStd">Std</button>
+            <button type="button" class="btn ghost sm" data-accel="3" data-i18n="bSharp">Sharp</button>
+          </div>
+          <div class="ctrl" style="margin-top:14px">
+            <label data-i18n="lAccel">Acceleration</label><span class="val"><span id="accNum">140</span></span>
+            <input id="mLiveAcc" type="range" min="0" max="150" step="5" value="140" />
+          </div>
+          <div class="row wrap">
+            <button type="button" class="btn ghost sm" data-acc="140" data-i18n="bStd140">Std 140</button>
+            <button type="button" class="btn ghost sm" data-acc="150" data-i18n="bSharp150">Sharp 150</button>
+            <button type="button" class="btn" id="btnAccApply" data-i18n="bApply">Apply</button>
+          </div>
+          <div class="ctrl" style="margin-top:16px">
+            <label data-i18n="lPull">Extra power</label><span class="val">+<span id="pullNum">0</span>%</span>
+            <input id="mLivePull" type="range" min="0" max="100" step="5" value="0" />
+          </div>
+          <div class="row wrap">
+            <button type="button" class="btn ghost sm" data-pull="0">0%</button>
+            <button type="button" class="btn ghost sm" data-pull="10">+10%</button>
+            <button type="button" class="btn ghost sm" data-pull="20">+20%</button>
+            <button type="button" class="btn" id="btnPullApply" data-i18n="bApply">Apply</button>
+            <button type="button" class="btn ghost" id="btnPullStock" data-i18n="bStock">Stock</button>
+            <button type="button" class="btn ghost" id="btnMotorRestore" data-i18n="bRestoreStock">Restore original</button>
+          </div>
+          <p class="warn" data-i18n="warnPull"></p>
+          <div class="row wrap" style="margin-top:12px">
+            <span class="k" data-i18n="lOverdrive">Overdrive</span>
+            <button type="button" class="btn ghost sm" id="btnOdOff" data-i18n="kOff">Off</button>
+            <button type="button" class="btn ghost sm" id="btnOdOn">On</button>
+          </div>
+          <p class="note" data-i18n="nHeat"></p>
+          <div class="row wrap" style="margin-top:12px">
+            <span class="k" data-i18n="lAutoPark">Auto-park</span>
+            <button type="button" class="btn ghost sm" id="btnParkOn" data-i18n="bStock">Stock</button>
+            <button type="button" class="btn ghost sm" id="btnParkOff" data-i18n="bThrottleStop">Throttle from stop</button>
+          </div>
+          <p class="note" data-i18n="nBrake"></p>
+          <p class="note" id="motorTuneNote"></p>
+        </div>
+        <div class="card fold">
+          <h3><span>FOC</span> <span class="fold-hint" data-i18n="hintAdv">Advanced</span></h3>
+          <div class="foc-grid" id="focGrid">
+            <label>D0<input id="foc-d0" type="number" min="1" max="8191" value="1536" /></label>
+            <label>D1<input id="foc-d1" type="number" min="1" max="8191" value="2560" /></label>
+            <label>D2<input id="foc-d2" type="number" min="1" max="8191" value="5120" /></label>
+            <label>D3<input id="foc-d3" type="number" min="1" max="8191" value="1280" /></label>
+            <label>D4<input id="foc-d4" type="number" min="1" max="8191" value="537" /></label>
+            <label>D5<input id="foc-d5" type="number" min="0" max="8191" value="197" /></label>
+            <label>D6<input id="foc-d6" type="number" min="0" max="8191" value="235" /></label>
+            <label>D7<input id="foc-d7" type="number" min="0" max="8191" value="225" /></label>
+            <label>D8<input id="foc-d8" type="number" min="0" max="15" value="1" /></label>
+          </div>
+          <div class="row wrap">
+            <button type="button" class="btn ghost sm" id="btnFocRead" data-i18n="bRead">Read</button>
+            <button type="button" class="btn ghost sm" id="btnFocStock" data-i18n="bStockFoc">Original map</button>
+            <button type="button" class="btn ghost sm" id="btnFocHill" data-i18n="focHill">Hill</button>
+            <button type="button" class="btn ghost sm" id="btnFocRain" data-i18n="focRain">Rain</button>
+            <button type="button" class="btn ghost sm" id="btnFocRace" data-i18n="modeRace">Race</button>
+            <button type="button" class="btn" id="btnFocApply" data-i18n="bApplyFoc">Apply FOC</button>
+          </div>
+          <p class="note" id="motorLiveNote"></p>
+        </div>
+        <div class="card fold is-open" id="tireCard">
+          <h3 data-i18n="wheelT">Wheel size</h3>
+          <div class="ctrl tire-base-row">
+            <label data-i18n="wheelBase">Stock firmware base</label>
+            <select id="tireBase" aria-label="Stock firmware base"></select>
+          </div>
+          <p class="note" id="tireBaseNote"></p>
+          <p class="note" id="tireNa" data-i18n="naFlash" hidden></p>
+          <p class="note" id="tireOff" data-i18n="wheelOff" hidden></p>
+          <div id="tireControls" hidden>
+            <div class="seg" id="tireInches">
+              <button type="button" data-inch="10">10″</button>
+              <button type="button" data-inch="10.5">10.5″</button>
+              <button type="button" data-inch="11">11″</button>
+              <button type="button" data-inch="11.5">11.5″</button>
+              <button type="button" data-inch="12">12″</button>
+            </div>
+            <div class="ctrl">
+              <label data-i18n="wheelCustom">Size (inches)</label>
+              <span class="val"><span data-for="tireInch">11</span>″ · <span id="tireMm">270 mm</span></span>
+              <input id="tireInch" type="range" min="0.1" max="20" step="0.1" value="11" />
+            </div>
+            <p class="note" id="tireResult"></p>
+            <div class="actions">
+              <button type="button" class="btn" id="tireFlash" data-i18n="wheelFlash">Flash to scooter</button>
+            </div>
+          </div>
+          <p class="note" id="tireStatus"></p>
+        </div>
+      
+            </section>
+      <section class="view" id="view-vxfw">
+        <header class="page-head">
+          <h2>VXFW <span class="ver">2.3.0</span></h2>
+          <button type="button" class="link-quiet sm" data-view="guide" data-i18n="gateGuideLink">First time? Read the Guide</button>
+          <p class="lead" data-i18n="hCfw"></p>
+        </header>
+      </section>
+
+      <section class="view" id="view-about">
+        <header class="page-head about-head">
+          <img class="logo about-logo" src="assets/mark.png" alt="" />
+          <h2>Vexora <span class="ver">2.3.0</span></h2>
+          <p class="lead" data-i18n="aboutLead"></p>
+        </header>
+        <div class="card fold is-open" id="fbCard">
+          <h3 data-i18n="fbCardT">Rate the app</h3>
+          <div class="actions"><button type="button" class="btn" id="btnFeedback" data-i18n="fbOpen">Give feedback</button></div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="aboutSupport">Support</h3>
+          <div class="models">
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/g3.png" alt="Ninebot Max G3" /></div>
+              <div class="model-meta">
+                <b>Max G3</b>
+                <span data-i18n="supported">Supported</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/zt3.png" alt="Segway ZT3 Pro" /></div>
+              <div class="model-meta">
+                <b>ZT3 Pro</b>
+                <span data-i18n="supported">Supported</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/f3.png" alt="Ninebot F3" /></div>
+              <div class="model-meta">
+                <b>F3</b>
+                <span data-i18n="linkTune">Link + Tune</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/f3.png" alt="Ninebot F3 Pro" /></div>
+              <div class="model-meta">
+                <b>F3 Pro</b>
+                <span data-i18n="supported">Supported</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/gt3.png" alt="Segway GT3" /></div>
+              <div class="model-meta">
+                <b>GT3</b>
+                <span data-i18n="linkTune">Link + Tune</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/gt3pro.png" alt="Segway GT3 Pro" /></div>
+              <div class="model-meta">
+                <b>GT3 Pro</b>
+                <span data-i18n="linkTune">Link + Tune</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/e3.png" alt="Ninebot E3" /></div>
+              <div class="model-meta">
+                <b>E3</b>
+                <span data-i18n="soon">Coming soon</span>
+              </div>
+            </article>
+            <article class="model is-now">
+              <div class="model-shot"><img src="assets/models/e3pro.png" alt="Ninebot E3 Pro" /></div>
+              <div class="model-meta">
+                <b>E3 Pro</b>
+                <span data-i18n="soon">Coming soon</span>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="aboutProduct">Product</h3>
+          <div class="kv kv-stack">
+            <div><span data-i18n="kvVersion">Version</span><b>2.3.0</b></div>
+            <div><span data-i18n="kvNow">Now</span><b>Max G3 · ZT3 Pro · F3 · GT3 · GT3 Pro</b></div>
+            <div><span>Custom BLE</span><b>G3 · F3 Pro</b></div>
+            <div><span data-i18n="kvClient">Client</span><b>Chrome / Edge · HTTPS</b></div>
+            <div><span data-i18n="kvLink">Link</span><b>Web Bluetooth</b></div>
+            <div><span>Studio</span><b><a href="https://vexora.printspace.at/" target="_blank" rel="noopener noreferrer" referrerpolicy="strict-origin">vexora.printspace.at</a></b></div>
+          </div>
+          <p class="note" data-i18n="aboutFlashNote"></p>
+          <p class="k" style="margin-top:14px" data-i18n="kvLang">Language</p>
+          <div class="seg lang-seg" id="langSeg" style="margin-top:8px" role="group" aria-label="Language">
+            <button type="button" data-lang="en" class="is-on" aria-label="English">EN</button>
+            <button type="button" data-lang="es" aria-label="Spanish">ES</button>
+            <button type="button" data-lang="de" aria-label="Deutsch">DE</button>
+            <button type="button" data-lang="fr" aria-label="Français">FR</button>
+            <button type="button" data-lang="it" aria-label="Italiano">IT</button>
+          </div>
+          <p class="k" style="margin-top:14px" data-i18n="kvUnits">Units</p>
+          <div class="actions" style="margin-top:8px">
+            <button type="button" class="btn ghost sm" id="btnUnit">km/h</button>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn ghost sm" id="btnInstall" hidden data-i18n="install">Install</button>
+            <button type="button" class="btn ghost sm" id="btnKiosk" data-i18n="kiosk">Kiosk</button>
+            <button type="button" class="btn ghost sm" id="btnHideSn" data-i18n="hideSn">Hide SN</button>
+            <button type="button" class="btn ghost sm" id="btnPinSet" data-i18n="pinSet">Set PIN</button>
+            <button type="button" class="btn ghost sm" id="btnPinClear" data-i18n="pinOff">Clear PIN</button>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3>Discord</h3>
+          <p class="lead about-copy" data-i18n="aboutDiscord"></p>
+          <div class="actions">
+            <a class="btn" href="https://discord.gg/vxfw" target="_blank" rel="noopener noreferrer" data-i18n="bJoinDiscord">Join Discord</a>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="consentLink">Privacy & cookies</h3>
+          <p class="note" data-i18n="aboutPriv"></p>
+          <div class="actions" style="margin-top:8px">
+            <button type="button" class="btn ghost sm" data-view="privacy" data-i18n="privacy">Privacy</button>
+            <button type="button" class="btn ghost sm" data-view="cookies" data-i18n="cookies">Cookies</button>
+            <a class="btn ghost sm" href="/support" data-i18n="workWithUs">Work with us</a>
+            <button type="button" class="btn ghost sm" id="btnConsentReopen" data-i18n="consentReopen">Change consent</button>
+            <button type="button" class="btn ghost sm" id="btnClearData" data-i18n="clearData">Delete local data</button>
+          </div>
+          <p class="note" id="privacyNote"></p>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="aboutCredits">Credits</h3>
+          <div class="people">
+            <div>
+              <div class="p-who"><b>Romeo</b><span>Sponsor</span></div>
+              <small class="p-dc"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-dc"></use></svg>rom.eoo</small>
+            </div>
+            <div>
+              <div class="p-who"><b>Boss</b><span>Founder</span></div>
+              <small class="p-dc"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-dc"></use></svg>joelneunundsechzig69</small>
+            </div>
+            <div>
+              <div class="p-who"><b>Vanillab</b><span>CEO</span></div>
+              <small class="p-dc"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-dc"></use></svg>xaver652.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="getApp">Get the app</h3>
+          <div class="row wrap" style="gap:10px">
+            <a class="btn pi" href="assets/Vexora.apk" download><svg class="pi" aria-hidden="true"><use href="#i-android"></use></svg><span data-i18n="apkBtn">Android · Install APK</span></a>
+            <button type="button" class="btn ghost pi" disabled><svg class="pi" aria-hidden="true"><use href="#i-apple"></use></svg><span data-i18n="ipaSoon">iPhone · coming soon</span></button>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="aboutChangelog">Changelog</h3>
+          <div class="kv kv-stack">
+            <div><span>2.9.0</span><b>New: support upgrades for the team — chat search, hand-offs between agents, editable quick replies, bad-rating alerts, WhatsApp-style read ticks and instant refresh on tab return</b></div>
+            <div><span>2.8.0</span><b>New: support console pagination for every list (waiting, active, logs, team) · fixed message bubbles · full-screen WhatsApp-style chat on phones</b></div>
+            <div><span>2.7.0</span><b>New: AI assistant covers support when no agents are available — Vexora knowledge, instant answers, Discord ticket hand-off · louder chat sounds on phones</b></div>
+            <div><span>2.6.0</span><b>Support with sound: new chats and replies ding with optional notifications · closed-chat LOGS with star ratings · quick replies · typing indicator · save transcript</b></div>
+            <div><span>2.5.2</span><b>Support console stability: chat messages can no longer be duplicated — even on slow connections or double taps · the agent console is now comfortable on phones</b></div>
+            <div><span>2.5.1</span><b>Support console redesigned with the real Vexora look — Montserrat, dark, and finally easy to use on mobile · new “Work with us” shortcut in About → Privacy &amp; cookies</b></div>
+            <div><span>2.5.0</span><b>Support upgrade: agents sign chats with their own name, show availability, and you can rate them with stars after the chat</b></div>
+            <div><span>2.4.1</span><b>Behind the scenes: the support team console now signs in with Discord roles — safer for everyone</b></div>
+            <div><span>2.4.0</span><b>Live chat: talk to a real support agent from the website · new Support Console for the team</b></div>
+            <div><span>2.3.4</span><b>Fresh modern look across the site and the app · the Uncapped 100 preset is marked coming soon — US 45 stays fully available</b></div>
+            <div><span>2.3.3</span><b>Status alerts: the site now posts its own status to a Discord channel — when it goes under maintenance (with the reason) and when it is back</b></div>
+            <div><span>2.3.2</span><b>Speed fix — Tuning limits now stick (Uncapped 100 holds); the version spoof also changes what the scooter reports over Bluetooth</b></div>
+            <div><span>2.3.1</span><b>Version spoof for the VCU — make the scooter report stock firmware (e.g. 1.5.8) to any tool · fixed "Uncapped 100 falls back to 25": limits are now applied after the unlock flag and verified by read-back</b></div>
+            <div><span>2.3.0</span><b>Shareable preset links · rate how the flash went · French and Italian</b></div>
+            <div><span>2.2.0</span><b>Motor tool: Safe by default · Unsafe presets behind a timed warning · field weakening capped to protect the motor · F3 Pro support · Android app download · smoother UI</b></div>
+            <div><span>2.1.2</span><b>Fixed — flashing motor or wheel firmware no longer re-locks the scooter; every custom build carries the unlock key</b></div>
+            <div><span>2.1.1</span><b>Profile editor: one Standard/Tuning header · US 45 and Uncapped 100 presets</b></div>
+            <div><span>2.1.0</span><b>Vexora 2.1 — two ride profiles on one firmware with your own secret button combo · Germany 22 / Europe 25 presets · cruise, underglow and front bar per profile · the controller never re-locks</b></div>
+            <div><span>2.0.0</span><b>Vexora 2.0 — cleaner UI with a lot less text · wheel flashing opens the live progress window · wheel tool on the 1.3.15 base only</b></div>
+            <div><span>1.9.8</span><b>Wheel tool: the base now matches your scooter's MCU automatically, and after flashing we wait for the reboot and verify what's actually running on it</b></div>
+            <div><span>1.9.7</span><b>Maintenance page refined — minimal black &amp; white design, the real Vexora logo in the browser tab, straight-to-the-point copy</b></div>
+            <div><span>1.9.4</span><b>Stock restore asks first: it locks the VCU and flashing custom firmware again will need an ST-Link · confirmation dialog before restoring</b></div>
+            <div><span>1.9.3</span><b>Clearer flash errors — locked firmware says you need an ST-Link unlock · plain-language wheel tool · Any BLE hint when your scooter is not in the list</b></div>
+            <div><span>1.8.0</span><b>Server-side firmware build · wheel size with your stock MCU preselected · 0.1″ steps · flash-only, no downloads</b></div>
+            <div><span>1.7.2</span><b>Wheel size changer built into the Motor tab · load a package, pick the size, flash</b></div>
+            <div><span>1.7.1</span><b>Wheel size changer · patch the tire diameter from a ZIPv3 package (F3 · G3 · ZT3 · GT3)</b></div>
+            <div><span>1.7.0</span><b>Version-matched firmware · VCU 1.5.4 / 1.5.5 / 1.5.8 exact bases · stock restore G3 · F3 · ZT3 · mobile UX pass</b></div>
+            <div><span>1.6.3</span><b>Flash engine rebuilt · motor priming · batched display transfer · auto-reconnect after reboot</b></div>
+            <div><span>1.6.2</span><b>Bluetooth reconnect · automatic retry after a dropped link · clearer errors</b></div>
+            <div><span>1.6.1</span><b>Flasher reliability · safe writes on every phone · automatic page retries · clearer errors</b></div>
+            <div><span>1.6.0</span><b>Guide tab · every setting explained · friendlier wording</b></div>
+            <div><span>1.5.0</span><b>Custom BLE + Studio link (G3 · F3) · animated UI</b></div>
+            <div><span>1.4.0</span><b>F3 · GT3 · GT3 Pro connectable · model photos fixed</b></div>
+            <div><span>1.4.0</span><b>F3 · GT3 Pro lineup · Display Studio removed</b></div>
+            <div><span>1.2.0</span><b>Display Studio G3: custom boot logos · icons · update GIF</b></div>
+            <div><span>1.1.9</span><b>Portrait · Speed · Panic · motion</b></div>
+            <div><span>1.1.8</span><b>HUD · i18n · history · presets · PIN</b></div>
+            <div><span>1.1.7</span><b>ZT3 VCU</b></div>
+            <div><span>1.1.6</span><b>Cluster · session · UI · ZT3 VCU</b></div>
+            <div><span>1.1.5</span><b>Cluster · motor W on gauge</b></div>
+            <div><span>1.1.4</span><b>Pack cells · Drive/Sport enable · SN / last tab</b></div>
+            <div><span>1.1.3</span><b>Overdrive ident fix · live top speed / FOC / auto-park</b></div>
+            <div><span>1.1.2</span><b>Motor CFW = Flash MCU · Best default</b></div>
+            <div><span>1.1.0</span><b>Max G3 live + CFW · ZT3 / E3 coming</b></div>
+            <div><span>Tune</span><b>Speed, lights, battery, system, display</b></div>
+            <div><span>VXFW</span><b>Custom firmware (MCU + VCU) then live FOC / overdrive</b></div>
+            <div><span>Link</span><b>Trip CSV · reconnect · thermal foldback</b></div>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="aboutUse">Use</h3>
+          <p class="about-copy" data-i18n="aboutUseTxt"></p>
+        </div>
+      </section>
+
+      <section class="view" id="view-guide">
+        <header class="page-head">
+          <h2 data-i18n="guideTitle">Guide</h2>
+          <p class="lead" data-i18n="guideLead">Everything this app does, explained in plain words.</p>
+        </header>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="gStartT">Start here</h3>
+          <ol class="steps-list">
+            <li data-i18n="gS1">Turn the scooter on and keep it close.</li>
+            <li data-i18n="gS2">Pick your model.</li>
+            <li data-i18n="gS3">Press Connect and choose your scooter.</li>
+            <li data-i18n="gS4">Link shows live data.</li>
+            <li data-i18n="gS5">Tune is for changes. Charge above 30% before flashing.</li>
+          </ol>
+          <p class="note" data-i18n="gStartN"></p>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="gCheckT">First-time checklist</h3>
+          <div class="checklist" id="guideCheck">
+            <label class="chk"><input type="checkbox" data-gchk="model" /><i></i><span data-i18n="gC1"></span></label>
+            <label class="chk"><input type="checkbox" data-gchk="connect" /><i></i><span data-i18n="gC2"></span></label>
+            <label class="chk"><input type="checkbox" data-gchk="live" /><i></i><span data-i18n="gC3"></span></label>
+            <label class="chk"><input type="checkbox" data-gchk="flash" /><i></i><span data-i18n="gC4"></span></label>
+          </div>
+          <p class="note" data-i18n="gCheckN"></p>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="gTabsT">What each tab does</h3>
+          <div class="glist">
+            <div><b data-i18n="tabLink">Link</b><span data-i18n="gTabLink"></span></div>
+            <div><b data-i18n="tabTune">Tune</b><span data-i18n="gTabTune"></span></div>
+            <div class="g-classic-only"><b data-i18n="tabCfw">CFW</b><span data-i18n="gTabCfw"></span></div>
+            <div class="g-classic-only"><b data-i18n="tabMotor">Motor</b><span data-i18n="gTabMotor"></span></div>
+            <div class="g-vxfw-only"><b data-i18n="tabVxfw">VXFW</b><span data-i18n="gTabVxfw"></span></div>
+            <div><b data-i18n="tabGuide">Guide</b><span data-i18n="gTabGuide"></span></div>
+            <div><b data-i18n="tabAbout">About</b><span data-i18n="gTabAbout"></span></div>
+            <div><b data-i18n="tabLog">Log</b><span data-i18n="gTabLog"></span></div>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="gSetT">Every setting, explained</h3>
+          <div class="glist">
+            <div><b data-i18n="gSetLinkT">Link</b><span data-i18n="gSetLink"></span></div>
+            <div><b data-i18n="tSpeed">Speed</b><span data-i18n="gSetSpeed"></span></div>
+            <div><b data-i18n="tSaved">Saved setups</b><span data-i18n="gSetPresets"></span></div>
+            <div><b data-i18n="tLights">Lights</b><span data-i18n="gSetLights"></span></div>
+            <div><b data-i18n="tRide">Riding</b><span data-i18n="gSetRide"></span></div>
+            <div><b data-i18n="tBattery">Battery</b><span data-i18n="gSetBattery"></span></div>
+            <div><b data-i18n="tSystem">System</b><span data-i18n="gSetSystem"></span></div>
+            <div><b data-i18n="tDiag">Diagnostics</b><span data-i18n="gSetDiag"></span></div>
+            <div><b data-i18n="tCbtn">Extra button</b><span data-i18n="gSetCbtn"></span></div>
+            <div><b data-i18n="tabVxfw">VXFW</b><span data-i18n="gSetCfw"></span></div>
+            <div><b>VXFW · motor</b><span data-i18n="gSetMotor"></span></div>
+          </div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="gDeepT">Parameters in depth</h3>
+          <div class="glist">
+            <div><b data-i18n="lScale">Strength</b><span data-i18n="gDeepScale"></span></div>
+            <div><b data-i18n="lEngage">Starts at</b><span data-i18n="gDeepEngage"></span></div>
+            <div><b>iqFW</b><span data-i18n="gDeepIqfw"></span></div>
+            <div><b data-i18n="lPull">Extra power</b><span data-i18n="gDeepPull"></span></div>
+            <div><b data-i18n="lPeak">Peak current</b><span data-i18n="gDeepPeak"></span></div>
+            <div><b data-i18n="lAccel">Acceleration</b><span data-i18n="gDeepAccel"></span></div>
+            <div><b data-i18n="lTopSpeed">Top speed</b><span data-i18n="gDeepTop"></span></div>
+            <div><b data-i18n="lFoldback">Heat cut-off</b><span data-i18n="gDeepFold"></span></div>
+            <div><b data-i18n="gDeepRelT">How they play together</b><span data-i18n="gDeepRel"></span></div>
+            <div><b data-i18n="gDeepHeatT">Heat and the whine</b><span data-i18n="gDeepHeat"></span></div>
+          </div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="wzT">Find your settings</h3>
+          <div class="wz-grid">
+            <label><span data-i18n="wzFeel">How should it feel?</span>
+              <select id="wzFeel">
+                <option value="chill" data-i18n="wzF1">Chill and smooth</option>
+                <option value="balanced" selected data-i18n="wzF2">Balanced</option>
+                <option value="punch" data-i18n="wzF3">Maximum punch</option>
+              </select>
+            </label>
+            <label><span data-i18n="wzRange">Prioritize range?</span>
+              <select id="wzRange">
+                <option value="yes" data-i18n="wzY">Yes</option>
+                <option value="no" selected data-i18n="wzN">No</option>
+              </select>
+            </label>
+            <label><span data-i18n="wzSpeed">More top speed than legal?</span>
+              <select id="wzSpeed">
+                <option value="no" selected data-i18n="wzN">No</option>
+                <option value="yes" data-i18n="wzY">Yes</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn" id="btnWzGo" data-i18n="wzGo">Recommend settings</button>
+          </div>
+          <p class="note wz-out" id="wzOut" hidden></p>
+          <div class="actions" id="wzActs" hidden>
+            <button type="button" class="btn ghost sm" id="btnWzMotor" data-i18n="wzMotor">Open in Motor</button>
+            <button type="button" class="btn ghost sm" id="btnWzAi" data-i18n="wzAi">Fine-tune with Vexora AI</button>
+          </div>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="repT">Parameter report</h3>
+          <p class="note" data-i18n="repLead"></p>
+          <div class="actions">
+            <input type="file" id="repFile" accept=".bin,.zip" hidden />
+            <button type="button" class="btn" id="btnRepPick" data-i18n="repPick">Choose .bin or .zip</button>
+            <a class="btn ghost sm" id="repDl" download="parameter-report.json" hidden data-i18n="repDl">Download JSON</a>
+          </div>
+          <p class="note wz-out" id="repOut" hidden></p>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="gSafeT">Safety and good use</h3>
+          <ul class="bullets">
+            <li data-i18n="gSafe1"></li>
+            <li data-i18n="gSafe2"></li>
+            <li data-i18n="gSafe3"></li>
+            <li data-i18n="gSafe4"></li>
+            <li data-i18n="gSafe5"></li>
+          </ul>
+        </div>
+
+        <div class="card fold">
+          <h3 data-i18n="gGlossT">Glossary</h3>
+          <div class="gloss">
+            <div><b>VCU</b><span data-i18n="gG1"></span></div>
+            <div><b>MCU</b><span data-i18n="gG2"></span></div>
+            <div><b>BLE</b><span data-i18n="gG3"></span></div>
+            <div><b>BMS</b><span data-i18n="gG4"></span></div>
+            <div><b>SN</b><span data-i18n="gG5"></span></div>
+            <div><b>SOC</b><span data-i18n="gG6"></span></div>
+            <div><b>ODO</b><span data-i18n="gG7"></span></div>
+            <div><b>VXFW</b><span data-i18n="gG8"></span></div>
+            <div><b>FOC</b><span data-i18n="gG9"></span></div>
+            <div><b>iqFW</b><span data-i18n="gG10"></span></div>
+            <div><b>KERS</b><span data-i18n="gG11"></span></div>
+            <div><b>VMP</b><span data-i18n="gG12"></span></div>
+            <div><b>Foldback</b><span data-i18n="gG13"></span></div>
+            <div><b>Overdrive</b><span data-i18n="gG14"></span></div>
+          </div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="gFaqT">Common problems</h3>
+          <div class="faq">
+            <details><summary data-i18n="gFaq1T"></summary><p data-i18n="gFaq1"></p></details>
+            <details><summary data-i18n="gFaq2T"></summary><p data-i18n="gFaq2"></p></details>
+            <details><summary data-i18n="gFaq3T"></summary><p data-i18n="gFaq3"></p></details>
+            <details><summary data-i18n="gFaq4T"></summary><p data-i18n="gFaq4"></p></details>
+            <details><summary data-i18n="gFaq5T"></summary><p data-i18n="gFaq5"></p></details>
+            <details><summary data-i18n="gFaq6T"></summary><p data-i18n="gFaq6"></p></details>
+            <details><summary data-i18n="gFaq7T"></summary><p data-i18n="gFaq7"></p></details>
+            <details><summary data-i18n="gFaq8T"></summary><p data-i18n="gFaq8"></p></details>
+            <details><summary data-i18n="gFaq9T"></summary><p data-i18n="gFaq9"></p></details>
+            <details><summary data-i18n="gFaq10T"></summary><p data-i18n="gFaq10"></p></details>
+          </div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3>Discord</h3>
+          <p class="note" data-i18n="gMore"></p>
+          <div class="actions">
+            <a class="btn" href="https://discord.gg/vxfw" target="_blank" rel="noopener noreferrer">Join Discord</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-community">
+        <header class="page-head">
+          <h2 data-i18n="ridT">Community</h2>
+          <p class="lead" data-i18n="ridLead">Rider accounts: sign up, verify your email and talk to other riders.</p>
+        </header>
+
+        <a class="btn block rid-feed-cta" style="margin:0 0 6px" href="/community/" data-i18n="commOpenFeed">Open the community feed</a>
+        <p class="hint" style="text-align:center;margin:0 0 16px" data-i18n="ridFeedSub">Rider photos — watch, like and comment.</p>
+
+        <div class="card fold is-open">
+          <div id="ridLogged" hidden>
+            <h3 data-i18n="ridAcctT">Your account</h3>
+            <p class="note" style="margin:0 0 10px"><b id="ridWho">—</b> <span class="hint" data-i18n="ridLoggedAs">· verified rider</span></p>
+            <div class="actions">
+              <button type="button" class="btn ghost sm" id="btnRidLogout" data-i18n="ridLogout">Sign out</button>
+            </div>
+          </div>
+          <div id="ridForms">
+            <h3 class="rid-step-t" id="ridStepT" data-i18n="ridCreateT">Create your account</h3>
+            <p class="hint" id="ridStepSub" style="margin:2px 0 8px" data-i18n="ridStep1Sub">Step 1 of 3 — choose your rider name.</p>
+            <div class="rid-forms" id="ridFormReg1">
+              <label><span data-i18n="ridName">Name</span><input type="text" id="ridRegName" maxlength="20" autocomplete="username" /></label>
+              <div class="actions"><button type="button" class="btn block rid-auth-cta" id="btnRidNext1" data-i18n="ridNext">Next</button></div>
+            </div>
+            <div class="rid-forms" id="ridFormReg2" hidden>
+              <label><span data-i18n="ridPass">Password</span><input type="password" id="ridRegPass" autocomplete="new-password" /></label>
+              <label><span data-i18n="ridCpass">Confirm password</span><input type="password" id="ridRegPass2" autocomplete="new-password" /></label>
+              <p class="hint" style="margin:2px 0 0" data-i18n="ridRegHint">8+ characters. We email you a 6-digit code to verify.</p>
+              <div class="actions"><button type="button" class="btn block rid-auth-cta" id="btnRidNext2" data-i18n="ridNext">Next</button></div>
+            </div>
+            <div class="rid-forms" id="ridFormReg3" hidden>
+              <label><span data-i18n="ridMailOpt">Email (optional — to recover your account)</span><input type="email" id="ridRegMail" autocomplete="email" /></label>
+              <div class="actions"><button type="button" class="btn block rid-auth-cta" id="btnRidReg" data-i18n="ridReg">Create account</button></div>
+            </div>
+            <div class="rid-forms" id="ridFormLogin" hidden>
+              <label><span data-i18n="ridName">Name</span><input type="text" id="ridName" maxlength="20" autocomplete="username" /></label>
+              <label><span data-i18n="ridPass">Password</span><input type="password" id="ridPass" autocomplete="current-password" /></label>
+              <div class="actions"><button type="button" class="btn block rid-auth-cta" id="btnRidLogin" data-i18n="ridLogin">Sign in</button></div>
+              <button type="button" class="link-quiet sm" id="btnRidGoReset" data-i18n="ridForgot">Forgot password?</button>
+            </div>
+            <div class="rid-forms" id="ridFormVerify" hidden>
+              <p class="note" style="margin:0 0 8px" data-i18n="ridVerifyHint">Enter the 6-digit code we emailed you.</p>
+              <label><span data-i18n="ridCode">Code</span><input type="text" id="ridVerCode" inputmode="numeric" maxlength="6" /></label>
+              <div class="actions">
+                <button type="button" class="btn block rid-auth-cta" id="btnRidVerify" data-i18n="ridVerifyGo">Verify</button>
+                <button type="button" class="btn ghost sm" id="btnRidResend" data-i18n="ridResend">Resend code</button>
+              </div>
+            </div>
+            <div class="rid-forms" id="ridFormReset" hidden>
+              <p class="note" style="margin:0 0 8px" data-i18n="ridResetHint">We email you a code to set a new password.</p>
+              <label><span data-i18n="ridMail">Email</span><input type="email" id="ridResetMail" autocomplete="email" /></label>
+              <label><span data-i18n="ridCode">Code</span><input type="text" id="ridResetCode" inputmode="numeric" maxlength="6" /></label>
+              <label><span data-i18n="ridNewPass">New password</span><input type="password" id="ridResetPass" autocomplete="new-password" /></label>
+              <div class="actions">
+                <button type="button" class="btn block rid-auth-cta" id="btnRidResetReq" data-i18n="ridResetReq">Email me a code</button>
+                <button type="button" class="btn block rid-auth-cta" id="btnRidResetGo" data-i18n="ridResetGo" hidden>Set new password</button>
+              </div>
+              <button type="button" class="link-quiet sm" id="btnRidGoLogin2" data-i18n="ridHaveQ">Already have an account? Sign in</button>
+            </div>
+            <button type="button" class="link-quiet sm rid-alt" id="ridAltLink" data-i18n="ridHaveQ">Already have an account? Sign in</button>
+            <p class="note" id="ridMsg" hidden></p>
+          </div>
+        </div>
+
+        <div class="card fold is-open">
+          <h3 data-i18n="ridRidersT">Riders</h3>
+          <p class="hint" style="margin:-6px 0 8px" data-i18n="ridRidersSub">Search by name, open profiles, start a chat.</p>
+          <div class="rid-search">
+            <input type="search" id="ridFind" data-i18n-ph="ridFindPh" placeholder="Search rider by name…" autocomplete="off" />
+          </div>
+          <div class="glist" id="ridList"><p class="hint" data-i18n="ridSignInFirst">Sign in to see riders and chat.</p></div>
+        </div>
+
+        <div class="card fold" id="dmCard">
+          <h3><span data-i18n="ridChatT">Chat</span> <span class="hint" id="dmWith"></span></h3>
+          <p class="hint" style="margin:-6px 0 8px" data-i18n="ridChatSub">Private messages — they auto-delete after 30 days.</p>
+          <div class="dm-msgs" id="dmMsgs"></div>
+          <div class="rid-search" style="margin-top:10px">
+            <input type="text" id="dmInput" maxlength="1000" data-i18n-ph="ridDmPh" placeholder="Write a message…" />
+            <button type="button" class="btn ghost sm" id="btnDmPic" aria-label="Photo" title="Photo">🖼️</button>
+            <button type="button" class="btn sm" id="btnDmSend" data-i18n="ridSend">Send</button>
+            <input type="file" id="dmPicFile" accept="image/png,image/jpeg,image/webp" hidden />
+          </div>
+          <div class="actions" style="margin-top:8px">
+            <button type="button" class="btn ghost sm" id="btnDmBlock" data-i18n="ridBlock">Block</button>
+            <button type="button" class="btn ghost sm" id="btnDmReport" data-i18n="ridReport">Report</button>
+            <span class="hint" data-i18n="ridDmHint">Messages auto-delete after 30 days.</span>
+          </div>
+        </div>
+
+        <div class="rid-modal" id="ridWhyCard" hidden>
+          <div class="rid-modal-box">
+            <div id="ridWhyForm">
+              <h3 id="ridWhyTitle" data-i18n="ridReport">Report</h3>
+              <div class="why-list">
+                <label><input type="radio" name="ridWhy" value="spam" /><span data-i18n="ridWhySpam">Spam or scam</span></label>
+                <label><input type="radio" name="ridWhy" value="harass" checked="checked" /><span data-i18n="ridWhyHarass">Harassment or insults</span></label>
+                <label><input type="radio" name="ridWhy" value="illegal" /><span data-i18n="ridWhyIllegal">Sexual or illegal content</span></label>
+                <label><input type="radio" name="ridWhy" value="impersonation" /><span data-i18n="ridWhyImp">Impersonation</span></label>
+                <label><input type="radio" name="ridWhy" value="other" /><span data-i18n="ridWhyOther">Something else</span></label>
+              </div>
+              <textarea id="ridWhyDetail" maxlength="500" rows="3" data-i18n-ph="ridWhyPh" placeholder="Add details (optional)"></textarea>
+              <div class="actions">
+                <button type="button" class="btn block" id="btnRidWhySend" data-i18n="ridWhySend">Submit report</button>
+                <button type="button" class="btn ghost sm" id="btnRidWhyCancel" data-i18n="ridWhyClose">Close</button>
+              </div>
+            </div>
+            <div id="ridWhyDone" hidden>
+              <h3 data-i18n="ridThanks">Thanks for reporting — our team will review it.</h3>
+              <div class="actions"><button type="button" class="btn block" id="btnRidWhyClose" data-i18n="ridWhyClose">Close</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-log">
+        <header class="page-head">
+          <h2>Log</h2>
+          <p class="lead" data-i18n="hLog"></p>
+        </header>
+        <div class="row" style="margin-bottom:10px">
+          <button type="button" class="btn ghost sm" id="btnLogCopy" data-i18n="copy">Copy</button>
+          <button type="button" class="btn ghost sm" id="btnLogClear" data-i18n="clear">Clear</button>
+          <button type="button" class="btn ghost sm" id="btnLogExport" data-i18n="logExport">Export</button>
+        </div>
+        <div class="log" id="log"></div>
+      </section>
+
+      <section class="view" id="view-privacy">
+        <header class="page-head"><h2>Privacy policy</h2></header>
+        <div class="card">
+          <h3>Controller</h3>
+          <p class="note">Vexora. Contact: the official Discord server linked in About — this is the only channel. Vexora is a web client with a build function: firmware images are assembled on our server, sent to your browser and flashed from there. No accounts, no profiles.</p>
+        </div>
+        <div class="card">
+          <h3>What is processed</h3>
+          <p class="note">1) Device-local storage (see Cookies & local data): preferences (language, units, last tab), the risk acknowledgement, optional flash history and BLE pairing keys, an optional app PIN hash. 2) Bluetooth telemetry read from your own scooter (speed, battery, serial number) — displayed locally and never uploaded. 3) When you build firmware, the build parameters you chose (model, version, slider values) are sent to our build function together with your IP; the resulting image is delivered to your browser for flashing and is not stored. To operate the service and understand how it is used, we also keep short-lived technical logs of visits and builds — time, IP, country, browser type and the action taken (no content) — deleted automatically after 90 days. 4) Your public IP is necessarily visible to the host that serves these files; the host keeps its own standard access logs under its own policy.</p>
+          <p class="note">No data is sold, shared or used for profiling. No automated decision-making. No special categories of data. The scooter serial number is shown to you and stored locally only if you allow optional storage.</p>
+        </div>
+        <div class="card">
+          <h3>Legal basis (GDPR)</h3>
+          <p class="note">Art. 6(1)(b) — performance of the service you request (connecting to your scooter). Art. 6(1)(a) — consent, for optional storage (flash history, pairing keys), given via the consent banner and revocable at any time in About → Privacy & cookies. Art. 6(1)(f) — legitimate interest for strictly necessary storage (language, risk acknowledgement).</p>
+        </div>
+        <div class="card">
+          <h3>Your rights</h3>
+          <p class="note">Access, rectification, erasure, restriction, objection and portability (Art. 15–21 GDPR). Since all personal data lives only in your browser, erasure is immediate via "Delete local data". You may also lodge a complaint with your supervisory authority (AEPD in Spain).</p>
+        </div>
+        <div class="card">
+          <h3>Retention</h3>
+          <p class="note">Local data persists until you delete it or clear site data. Usage events (visits, builds) are kept for 90 days and then deleted automatically. Nothing else is retained by Vexora.</p>
+        </div>
+        <div class="card">
+          <h3>Third parties</h3>
+          <p class="note">The only outbound link is the Discord invite (opens discord.gg; no data is sent until you click and interact with Discord). No CDNs, no embedded widgets, no fonts or scripts from third parties. Firmware images are built on demand on our server, delivered straight to your browser's flash session and not stored.</p>
+        </div>
+        <div class="card">
+          <h3>Children</h3>
+          <p class="note">Vexora is a vehicle-diagnostic tool not directed at persons under 16.</p>
+        </div>
+        <div class="card">
+          <h3>Changes</h3>
+          <p class="note">Policy version: 2026-09-13. Material changes will be announced in the changelog.</p>
+        </div>
+      </section>
+
+      <section class="view" id="view-cookies">
+        <header class="page-head"><h2>Cookies & local data</h2></header>
+        <div class="card">
+          <h3>No cookies</h3>
+          <p class="note">Vexora does not set any HTTP cookies. It uses browser localStorage only, on this device. The table below lists exactly what is stored and why.</p>
+        </div>
+        <div class="card">
+          <h3>Necessary (no consent required)</h3>
+          <div class="kv kv-stack">
+            <div><span>vexora.lang</span><b>Language choice</b></div>
+            <div><span>vexora.tab</span><b>Last open tab</b></div>
+            <div><span>vexora.unit</span><b>km/h vs mph</b></div>
+            <div><span>vexora.model</span><b>Selected scooter model / modelo elegido</b></div>
+            <div><span>vexora.legal2</span><b>Risk acknowledgement / aviso de riesgo aceptado</b></div>
+            <div><span>vexora.consent</span><b>Your consent choice</b></div>
+            <div><span>vexora.seen.*</span><b>“What’s new” shown once / aviso de novedades</b></div>
+            <div><span>vexora.pin / foldback / kiosk / hideSn</span><b>UI & security preferences you set</b></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Optional (only with "Allow all")</h3>
+          <div class="kv kv-stack">
+            <div><span>vexora.cfw.*</span><b>Flash history per scooter / historial de flasheo</b></div>
+            <div><span>nbc_*</span><b>BLE pairing key cache / claves de emparejado</b></div>
+            <div><span>nexo.sessions</span><b>Remembered BLE devices / dispositivos recordados</b></div>
+            <div><span>vexora.lastTrip</span><b>Trip snapshot & gauge marks / datos de trayecto</b></div>
+          </div>
+          <p class="note">These keys are blocked at the storage level until you choose "Allow all". Change or withdraw consent anytime: About → Privacy & cookies → Change consent. Delete everything: Delete local data.</p>
+        </div>
+        <div class="card">
+          <h3>Service worker</h3>
+          <p class="note">A same-origin service worker caches the app files for offline use (Cache API). It stores no personal data and makes no third-party requests.</p>
+        </div>
+      </section>
+    </main>
+    <footer class="foot">
+      <span id="dWb">—</span>
+      <span class="foot-links">
+        <button type="button" class="linklike" data-view="privacy" data-i18n="privacy">Privacy</button>
+        <span aria-hidden="true">·</span>
+        <button type="button" class="linklike" data-view="cookies" data-i18n="cookies">Cookies</button>
+      </span>
+    </footer>
+  </div>
+
+  <div class="overlay legal" id="accessOverlay" style="display:none">
+    <div class="sheet legal-sheet">
+      <img class="logo about-logo" src="assets/mark.png" alt="" />
+      <h2 data-i18n="accT">Access code</h2>
+      <p class="help" data-i18n="accP">Vexora beta is free — join our Discord and run /vexaccess to get your code, then paste it here.</p>
+      <div class="ctrl">
+        <label>VEX-XXXX-XXXX</label><span class="val"></span>
+        <input id="accCode" type="text" placeholder="VEX-XXXX-XXXX" maxlength="16" autocomplete="off" spellcheck="false" />
+      </div>
+      <p class="warn" id="accErr"></p>
+      <div class="actions"><button type="button" class="btn" id="accGo" data-i18n="accGo">Unlock Vexora</button></div>
+      <p class="note"><a href="https://discord.gg/vxfw" target="_blank" rel="noopener" data-i18n="accDiscord">Join the Discord</a> · <a href="/" data-i18n="accMore">What is Vexora?</a></p>
+    </div>
+  </div>
+  <div class="overlay legal" id="unlockOverlay" style="display:none">
+    <div class="sheet legal-sheet">
+      <img class="logo about-logo" src="assets/mark.png" alt="" />
+      <h2 data-i18n="uT">Controller unlock — earned, not given</h2>
+      <p class="help" data-i18n="uP">The VCU/MCU unlock is free too — but you earn it by spreading the word. Make <b>2 videos about Vexora</b> (TikTok or YouTube) with <b>1,000+ views combined</b>, run <b>/unlock</b> in our Discord with both links, and paste the VXL code here.</p>
+      <div class="ctrl">
+        <label>VXL-XXXX-XXXX</label><span class="val"></span>
+        <input id="uCode" type="text" placeholder="VXL-XXXX-XXXX" maxlength="16" autocomplete="off" spellcheck="false" />
+      </div>
+      <p class="warn" id="uErr"></p>
+      <div class="actions"><button type="button" class="btn" id="uGo" data-i18n="uGo">Unlock with code</button></div>
+      <p class="note"><a href="https://discord.gg/vxfw" target="_blank" rel="noopener" data-i18n="accDiscord">Join the Discord</a></p>
+    </div>
+  </div>
+  <div class="overlay legal" id="legalOverlay">
+    <div class="sheet legal-sheet">
+      <img class="logo about-logo" src="assets/mark.png" alt="" />
+      <h2 data-i18n="legalTitle">Read this first</h2>
+      <div class="legal-body">
+        <p data-i18n="legal1">Vexora is a private-use client for Segway-Ninebot scooters. Max G3, ZT3 Pro, F3 Pro, GT3 and GT3 Pro are supported. E3 is coming.</p>
+        <p data-i18n="legal2">You can break your scooter. Flashing firmware or raising motor amps can brick the controller and burn the motor — repairs and the voided warranty are on you, not on us.</p>
+        <p data-i18n="legal3">Ride it on the street and the fine is yours. Private property or closed circuit only — the Vexora team is not responsible for any police fine or legal trouble.</p>
+        <p data-i18n="legal4">Everything you do is at your own risk. The Vexora team accepts no liability for damage to persons, vehicles, third parties, or property.</p>
+      </div>
+      <label class="sw legal-agree"><input type="checkbox" id="legalAgree" /><i></i><span data-i18n="legalAgree">I understand I can break my scooter and that any police fine is mine. I accept the privacy notice.</span></label>
+      <p class="warn" id="legalCount">Read this.</p>
+      <button type="button" class="btn" id="legalGo" disabled>Wait 10</button>
+    </div>
+  </div>
+
+  <div class="consent" id="consentBar" hidden role="dialog" aria-labelledby="cbTitle">
+    <div class="consent-card">
+      <b id="cbTitle">Cookies & local data</b>
+      <p id="cbBody">Vexora stores data only on this device.</p>
+      <div class="row wrap">
+        <button type="button" class="btn sm" id="cbMin">Necessary only</button>
+        <button type="button" class="btn ghost sm" id="cbAll">Allow all</button>
+        <button type="button" class="btn ghost sm" id="cbLink">Privacy & cookies</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="pairOverlay" hidden>
+    <div class="sheet">
+      <div class="pair-visual">
+        <div class="spin-wrap" id="pairRing" aria-hidden="true">
+          <svg class="spin" viewBox="0 0 48 48">
+            <circle class="track" cx="24" cy="24" r="18" />
+            <circle class="arc" cx="24" cy="24" r="18" />
+          </svg>
+        </div>
+        <div class="pwr" id="powerHint" hidden>
+          <span class="pwr-pulse" aria-hidden="true"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 3v8" />
+            <path d="M7.05 6.05a7 7 0 1 0 9.9 0" />
+          </svg>
+        </div>
+      </div>
+      <h2 id="pairTitle">Connecting</h2>
+      <p class="lead" id="pairDetail" aria-live="polite">Select a scooter</p>
+      <div class="steps" id="pairSteps" aria-hidden="true">
+        <i data-k="pick"></i>
+        <i data-k="gatt"></i>
+        <i data-k="nbc"></i>
+        <i data-k="ready"></i>
+      </div>
+      <button type="button" class="btn ghost" id="btnCancelWait">Cancel</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="otaOverlay" hidden>
+    <div class="sheet">
+      <h2 id="otaTitle">Flashing</h2>
+      <p class="lead" id="otaDetail">Building…</p>
+      <div class="bar ota-bar"><i id="otaBar"></i></div>
+      <p class="note" id="otaPct">0%</p>
+      <p class="note" id="otaKb">0 / 0 KB</p>
+      <button type="button" class="btn" id="otaReconnect" hidden>Reconnect</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="flashConfirm" hidden>
+    <div class="sheet">
+      <h2 id="fcTitle">Flash</h2>
+      <p class="lead" id="fcDetail"></p>
+      <p class="note" id="fcSn">SN —</p>
+      <p class="note" id="fcKb"></p>
+      <p class="warn" id="fcWarn" data-i18n="notStock">This is not stock firmware. The scooter will reboot.</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <button type="button" class="btn ghost" id="fcCancel">Cancel</button>
+        <button type="button" class="btn" id="fcGo">Flash</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="pullOverlay" hidden>
+    <div class="sheet danger">
+      <h2>Motor damage</h2>
+      <p class="lead" id="pullCopy">Pulling power above +20% is outside the safe range. It can overheat or destroy the motor.</p>
+      <p class="warn" id="pullCount">Wait 5 seconds.</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <button type="button" class="btn ghost" id="pullCancel">Cancel</button>
+        <button type="button" class="btn danger" id="pullGo" disabled>Wait 5</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="kersOverlay" hidden>
+    <div class="sheet danger">
+      <h2>Motor damage</h2>
+      <p class="lead" id="kersCopy">KERS is engine braking. Weak and Std load the motor hard and can destroy it. Leave it Off.</p>
+      <p class="warn" id="kersCount">Wait 5 seconds.</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <button type="button" class="btn ghost" id="kersCancel">Cancel</button>
+        <button type="button" class="btn danger" id="kersGo" disabled>Wait 5</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="unsafeOverlay" hidden>
+    <div class="sheet danger">
+      <h2>Motor damage</h2>
+      <p class="lead" id="unsafeCopy">More field-weakening amps or peak power means much more heat. This is how motors get destroyed.</p>
+      <p class="warn" id="unsafeCount">Read this. Confirm unlocks in 5s.</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <button type="button" class="btn ghost" id="unsafeCancel">Cancel</button>
+        <button type="button" class="btn danger" id="unsafeGo" disabled>Wait 5</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="rateOverlay" hidden>
+    <div class="sheet">
+      <h2 data-i18n="rateT">How did the flash go?</h2>
+      <p class="note" id="ratePart"></p>
+      <div class="row" style="justify-content:center;margin-top:14px">
+        <button type="button" class="btn ghost" id="rateGood" data-i18n="rateGood">All good</button>
+        <button type="button" class="btn ghost" id="rateBad" data-i18n="rateBad">Problems</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="whatsNew" hidden>
+    <div class="sheet">
+      <h2 data-i18n="whatsNew">2.3.0</h2>
+      <p class="lead" data-i18n="whatsNewBody">Motor profiles are Safe by default, Unsafe presets ask first, and the maintenance page can show your own message.</p>
+      <button type="button" class="btn" id="whatsGo" data-i18n="close">Close</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="boostOverlay" hidden>
+    <div class="sheet">
+      <h2>Boost</h2>
+      <p class="lead" id="boostCopy">Boost with high motor power in Tune can shut the scooter off. Be careful.</p>
+      <p class="warn" id="boostCount">Wait 5 seconds.</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <button type="button" class="btn ghost" id="boostCancel">Cancel</button>
+        <button type="button" class="btn" id="boostGo" disabled>Wait 5</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+function showView(name) {
+  if (!name) return;
+  var next = document.getElementById("view-" + name);
+  if (!next) return;
+  document.querySelectorAll(".view").forEach(function(v) {
+    if (v === next) {
+      v.classList.remove("leave");
+      v.classList.add("active");
+      return;
+    }
+    if (v.classList.contains("active") && !v.classList.contains("leave")) {
+      v.classList.add("leave");
+      setTimeout(function() {
+        v.classList.remove("active", "leave");
+      }, 320);
+    } else if (!v.classList.contains("leave")) {
+      v.classList.remove("active");
+    }
+  });
+  document.querySelectorAll("[data-view]").forEach(function(b) {
+    b.classList.toggle("active", b.getAttribute("data-view") === name);
+  });
+  try {
+    history.replaceState(null, "", location.pathname + "#" + name);
+  } catch (e) {}
+  try {
+    localStorage.setItem("vexora.tab", name);
+  } catch (e) {}
+}
+
+document.addEventListener("click", function(e) {
+  var el = e.target.closest("[data-view],[data-go]");
+  if (!el) return;
+  var name = el.getAttribute("data-go") || el.getAttribute("data-view");
+  if (name) showView(name);
+});
+
+window.addEventListener("hashchange", function() {
+  var n = (location.hash || "#dash").replace(/^#/, "");
+  if (document.getElementById("view-" + n)) showView(n);
+});
+
+var start = (location.hash || "").replace(/^#/, "");
+
+if (/^p=[A-Za-z0-9_-]+$/.test(start)) {
+  window.__vexoraShared = start;
+  start = "";
+}
+
+if (!start) {
+  try {
+    start = localStorage.getItem("vexora.tab") || "";
+  } catch (e) {
+    start = "";
+  }
+}
+
+let vxfwFlag = false;
+
+try {
+  vxfwFlag = localStorage.getItem("vexora.vxfw") === "1";
+} catch (e) {}
+
+if (vxfwFlag && (start === "cfw" || start === "motor")) start = "vxfw";
+
+if (!start || !document.getElementById("view-" + start)) start = "dash";
+
+showView(start);
+</script>
+  <script src="forge/assets/vendor/jszip.min.js"></script>
+  <script src="forge/assets/zip3.js"></script>
+  <script src="assets/vexora.js?v=1657"></script>
+  <script src="assets/i18n.js?v=1681"></script>
+  <script src="assets/consent.js?v=1657"></script>
+  <script src="cfw/assets/cfw.js?v=1666"></script>
+  <script src="assets/flasher.js?v=1657"></script>
+  <script src="assets/sim.js?v=1657"></script>
+  <script src="assets/live.js?v=1657"></script>
+  <script src="assets/app.js?v=1673"></script>
+  <script src="assets/extra.js?v=1657"></script>
+  <script src="assets/polish.js?v=1657"></script>
+  <script src="assets/tire.js?v=1657"></script>
+  <div class="overlay" id="fbWrap" hidden>
+    <div class="sheet">
+      <div id="fbForm">
+        <h2 data-i18n="fbTitle">How is the app treating you?</h2>
+        <div class="fb-faces" id="fbFaces">
+          <button type="button" data-r="1" aria-label="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+          <button type="button" data-r="2" aria-label="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+          <button type="button" data-r="3" aria-label="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+          <button type="button" data-r="4" aria-label="4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+          <button type="button" data-r="5" aria-label="5"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+        </div>
+        <textarea id="fbMsg" class="fb-msg" maxlength="600" rows="3" placeholder="Anything to add? (optional)"></textarea>
+        <div class="row wrap" style="justify-content:center;margin-top:6px">
+          <button type="button" class="btn" id="fbSend" data-i18n="fbSend">Send</button>
+          <button type="button" class="btn ghost" id="fbClose" data-i18n="fbCancel">Cancel</button>
+        </div>
+        <p class="note" id="fbOut" hidden></p>
+      </div>
+      <div id="fbDone" class="fb-done" hidden>
+        <svg class="fb-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>
+        <h2 data-i18n="fbThanks">Thanks! It helps a lot.</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay legal" id="discOverlay" style="display:none">
+    <div class="sheet legal-sheet">
+      <img class="logo about-logo" src="assets/mark.png" alt="" />
+      <h2 data-i18n="discT">Disclaimer</h2>
+      <div class="legal-body">
+        <p data-i18n="discP1">The research and engineering work is carried out by artificial intelligence and this software is still in a testing phase.</p>
+        <p data-i18n="discP2">As in every software, use at your own risk and be ready to recover using an ST-Link.</p>
+      </div>
+      <button type="button" class="btn" id="discOk" data-i18n="discOk">I understand</button>
+    </div>
+  </div>
+<style>
+  
+  #gdprWrap { position:fixed; inset:0; z-index:2147483000; background:rgba(5,5,7,.8);
+    display:flex; align-items:flex-end; justify-content:center; padding:10px; }
+  #gdprWrap[hidden] { display:none; }
+  #gdprCard { background:#16161a; color:#e8e8ec; font:500 13.5px/1.55 Montserrat,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    width:100%; max-width:560px; border:1px solid #2a2a31; border-radius:18px; overflow:hidden;
+    display:flex; flex-direction:column; max-height:calc(100dvh - 20px); }
+  @supports not (height:100dvh) { #gdprCard { max-height:calc(100vh - 20px); } }
+  #gdprHead { display:flex; gap:11px; align-items:center; padding:14px 16px 11px; border-bottom:1px solid #26262c; flex:none; }
+  #gdprHead .gic { width:34px; height:34px; flex:none; border-radius:10px; background:#232329; display:flex; align-items:center; justify-content:center; }
+  #gdprHead .gic svg { width:19px; height:19px; stroke:#ffd666; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  #gdprHead b { display:block; font-size:15.5px; }
+  #gdprHead small { color:#9a9aa3; font-size:11px; font-weight:600; }
+  #gdprBody { padding:13px 16px 4px; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+  #gdprBody h3 { margin:10px 0 2px; font-size:10px; letter-spacing:.14em; color:#9a9aa3; font-weight:800; }
+  #gdprBody p { margin:2px 0 0; }
+  #gdprBody a { color:#fff; }
+  #gdprBody ol { margin:4px 0 0; padding-left:18px; }
+  #gdprBody ol li { margin:3px 0; }
+  #gdprFoot { padding:11px 16px calc(11px + env(safe-area-inset-bottom)); border-top:1px solid #26262c; flex:none; }
+  #gdprChoose .grow { display:flex; gap:8px; }
+  #gdprAll, #gdprMin { flex:1; padding:12px 10px; border-radius:11px; cursor:pointer;
+    font:700 13.5px Montserrat,system-ui,sans-serif; }
+  #gdprAll { border:0; background:#e8e8ec; color:#111; }
+  #gdprMin { background:transparent; border:1px solid #3a3a42; color:#e8e8ec; }
+  .gnote { margin:8px 0 0; font-size:11px; color:#9a9aa3; line-height:1.45; }
+  #gdprOk { width:100%; padding:12px 14px; border:0; border-radius:11px; background:#e8e8ec; color:#111;
+    font:700 14px Montserrat,system-ui,sans-serif; cursor:pointer; }
+  #gdprCfg { width:100%; margin-top:8px; padding:9px; background:transparent; border:1px solid #3a3a42;
+    border-radius:11px; color:#c9c9d1; font:600 12.5px Montserrat,system-ui,sans-serif; cursor:pointer; }
+  @media (orientation:landscape) and (max-height:480px) {
+    #gdprWrap { align-items:stretch; padding:8px; }
+    #gdprCard { max-width:640px; margin:0 auto; max-height:calc(100dvh - 16px); }
+    #gdprHead { padding:10px 14px 8px; }
+    #gdprBody { padding:9px 14px 2px; font-size:12.5px; }
+  }
+</style>
+<div id="gdprWrap" hidden role="dialog" aria-modal="true" aria-label="Important notice about your privacy">
+  <div id="gdprCard">
+    <div id="gdprHead">
+      <span class="gic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3L2.8 6.2v5.3c0 5 3.6 8.6 9.2 9.5 5.6-.9 9.2-4.5 9.2-9.5V6.2L12 3z"/><path d="M12 8.6v4.2M12 15.6v.2"/></svg></span>
+      <div><b>What happened to Vexora?</b><small>You deserve the full story — please read</small></div>
+    </div>
+    <div id="gdprBody">
+      <h3>WHAT HAPPENED</h3>
+      <p>Our hosting provider took Vexora offline after a formal privacy complaint. That is why the app went dark.</p>
+      <h3>WHY IT HAPPENED</h3>
+      <p>Until now, Vexora logged visitors' IP addresses (for security and anti-abuse) <b>without showing a privacy/cookie consent first</b>. Under EU law (GDPR) that data requires consent — and the complaint was about exactly that. That was our mistake, and we own it.</p>
+      <h3>WHAT WE CHANGED</h3>
+      <ol>
+        <li><b>Consent first, always:</b> the support chat now asks your age (14+) and your agreement to the Privacy Policy before anything is stored — and records that consent.</li>
+        <li><b>Strict retention, automatic:</b> photos and voice notes deleted after 7 days, inactive chats fully deleted after 45 days, security logs after 90 days.</li>
+        <li><b>Transparency:</b> a full <a href="/privacy" target="_blank" rel="noopener">Privacy &amp; Terms</a> page and an official contact for any request: <a href="mailto:login.vexora@gmail.com">login.vexora@gmail.com</a>.</li>
+        <li><b>Still minimal:</b> no accounts for riders, no email, no ads, no trackers, no data selling.</li>
+      </ol>
+      <h3>OUR PROMISE</h3>
+      <p>We are committed to staying fully compliant with the GDPR from now on. Vexora matters too much to lose it again — thank you for staying with us.</p>
+    </div>
+    <div id="gdprFoot">
+      <div id="gdprChoose">
+        <div class="grow">
+          <button type="button" id="gdprAll">Allow all</button>
+          <button type="button" id="gdprMin">Only essential</button>
+        </div>
+        <p class="gnote">"Allow all" also keeps optional conveniences on this device (flash history, remembered BLE devices, trip snapshots). "Only essential" keeps strictly necessary settings only. Your previous choice, if any, has been voided by this incident — you must choose again. You can change it anytime.</p>
+      </div>
+      <div id="gdprDone" hidden>
+        <button type="button" id="gdprOk">I understand</button>
+        <button type="button" id="gdprCfg">Cookie settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  try {
+    var w = document.getElementById("gdprWrap");
+    var ACK = "vex.gdpr.ack.v2";
+    function acked() {
+      try {
+        return localStorage.getItem(ACK) === "1";
+      } catch (e) {
+        return false;
+      }
+    }
+    function show(mode) {
+      w.hidden = false;
+      document.getElementById("gdprChoose").hidden = mode !== "choose";
+      document.getElementById("gdprDone").hidden = mode !== "done";
+    }
+    if (!acked()) {
+      try {
+        localStorage.removeItem("vexora.consent");
+      } catch (e) {}
+      try {
+        if (window.Consent) window.Consent.hide();
+      } catch (e) {}
+      show("choose");
+    } else {
+      show("done");
+    }
+    function choose(v) {
+      try {
+        if (window.Consent) window.Consent.set(v); else localStorage.setItem("vexora.consent", v === "all" ? "all" : "min");
+      } catch (e) {}
+      try {
+        localStorage.setItem(ACK, "1");
+      } catch (e) {}
+      try {
+        if (window.Consent) window.Consent.hide();
+      } catch (e) {}
+      w.hidden = true;
+    }
+    document.getElementById("gdprAll").addEventListener("click", function() {
+      choose("all");
+    });
+    document.getElementById("gdprMin").addEventListener("click", function() {
+      choose("min");
+    });
+    document.getElementById("gdprOk").addEventListener("click", function() {
+      w.hidden = true;
+    });
+    document.getElementById("gdprCfg").addEventListener("click", function() {
+      show("choose");
+    });
+  } catch (e) {}
+})();
+</script>
+<script src="/assets/chat.js?v=1675" defer></script>
+</body>
+</html>

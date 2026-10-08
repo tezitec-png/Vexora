@@ -1,0 +1,14 @@
+# Vexora · redirecciones para Cloudflare (Pages y Workers static assets)
+# Alias de rutas. Un redirect solo aplica si la ruta no existe como archivo.
+# /vexora se conserva como alias legacy del nombre anterior.
+
+/vexorium      /               301
+/vexora        /               301
+/nexo          /               301
+/shu-studio    /forge/         301
+/vexorium/*    /:splat         301
+/vexora/*      /:splat         301
+/nexo/*        /:splat         301
+/shu-studio/*  /forge/:splat   301
+/app/assets/*    /assets/:splat   301
+/app/cfw/*       /cfw/:splat     301

@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Vexora · Admin</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="assets/app.css?v=1663" />
+  <style>
+    body { background: var(--bg); color: var(--text); font-family: inherit; }
+    .admin-wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px 80px; }
+
+    
+    .page-head { display: flex; align-items: flex-start; gap: 12px; margin: 26px 0 16px; flex-wrap: wrap; }
+    .page-head .ph-txt { flex: 1; min-width: 220px; }
+    .page-head h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+    .page-head .ph-sub { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+    .page-head .ph-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    
+    .pillrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 6px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px;
+      font-size: 11.5px; font-weight: 700; border: 1px solid var(--line-2); color: var(--muted); white-space: nowrap; }
+    .pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+    .pill.ok { color: var(--ok); border-color: rgba(84, 175, 74, .35); }
+    .pill.ok i { background: var(--ok); box-shadow: 0 0 6px rgba(84,175,74,.7); }
+    .pill.warn { color: #ffd88e; border-color: rgba(255, 216, 142, .3); }
+    .pill.warn i { background: #ffd88e; box-shadow: 0 0 6px rgba(255,216,142,.6); }
+    .pill.err { color: #ff6b6b; border-color: rgba(255, 107, 107, .3); }
+    .pill.err i { background: #ff6b6b; }
+
+    
+    .card { margin-top: 14px; }
+    .card > h3 { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; }
+
+    
+    .cap-card { margin-top: 4px; }
+    .cap-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .cap-head h3 { margin: 0; }
+    .cap-right { margin-left: auto; text-align: right; }
+    .cap-right b { font-size: 13.5px; }
+    .cap-right .hint { margin: 1px 0 0; }
+    .cap-sub { margin: 2px 0 12px; }
+    .cap-big { font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; margin: 0 0 8px; }
+    .cap-big small { color: var(--muted); font-weight: 700; font-size: 12px; }
+    .cap-bar { height: 8px; border-radius: 99px; background: var(--panel-2); border: 1px solid var(--line);
+      overflow: hidden; margin-bottom: 12px; }
+    .cap-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #d2d2d9, #8f8f97);
+      width: 0; transition: width .5s ease; }
+    .cap-counters { display: flex; flex-wrap: wrap; gap: 18px; font-size: 12.5px; color: var(--muted); padding-bottom: 12px;
+      border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+    .cap-counters b { color: var(--text); font-variant-numeric: tabular-nums; margin-left: 6px; }
+
+    
+    .ov-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 4px; }
+    @media (max-width: 820px) { .ov-grid { grid-template-columns: 1fr; } }
+    .ov-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+    .ov-card h4 { margin: 0 0 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
+    .ov-card .ov-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 3px 0; }
+    .ov-card .ov-row span { color: var(--muted); }
+    .ov-card .ov-row b { font-variant-numeric: tabular-nums; }
+
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 14px 0 4px; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; position: relative; overflow: hidden;
+      display: flex; flex-direction: column-reverse; gap: 7px; transition: border-color .15s ease; }
+    .stat::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--line-2); }
+    .stat.lb-1::before { background: #f4f4f5; } .stat.lb-2::before { background: #b9b9c0; }
+    .stat.lb-3::before { background: #8f8f97; } .stat.lb-4::before { background: #6f6f78; }
+    .stat:hover { border-color: var(--line-2); }
+    .stat b { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -0.02em; }
+    .stat span { font-size: 10.5px; color: var(--muted-2); font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+    .stat.ok b { color: var(--ok); }
+    .stat.flash b { color: #ffd88e; }
+    .totals { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 2px;
+      font-size: 12.5px; color: var(--muted); }
+    .totals b { color: var(--text); font-variant-numeric: tabular-nums; }
+    .totals .dot { opacity: .45; }
+    .totals .last b { color: #ffd88e; }
+
+    
+    .chart { display: flex; align-items: flex-end; gap: 8px; height: 130px; padding: 10px 4px 0; }
+    .chart .col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; height: 100%; text-align: center; }
+    .chart .bar { border-radius: 6px 6px 3px 3px; min-height: 2px; position: relative; opacity: .92; }
+    .chart .bar:hover { opacity: 1; }
+    .chart .bar.v { background: linear-gradient(180deg, #d2d2d9, #8f8f97); }
+    .chart .bar.b { background: linear-gradient(180deg, #b57455, #8f5a3d); }
+    .chart .num { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1; padding-bottom: 2px; }
+    .chart .col > span { font-size: 10.5px; color: var(--muted); padding-top: 5px; }
+    .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+    
+    .tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    tr:last-child td { border-bottom: 0; }
+    .chip { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; border: 1px solid var(--line-2); color: var(--muted); }
+    .chip.visit { color: #d2d2d9; border-color: rgba(210,210,217,.3); }
+    .chip.tire_build { color: #ffd88e; border-color: rgba(255,216,142,.3); }
+    .chip.cfw_build { color: #ff9e8e; border-color: rgba(255,158,142,.3); }
+    .chip.flash { color: var(--ok); border-color: rgba(84, 175, 74, .35); }
+    .chip.ban_add { color: #ff6b6b; border-color: rgba(255,107,107,.3); }
+    .chip.ban_remove { color: #d2d2d9; }
+    .chip.admin_login, .chip.admin_visit, .chip.rule_set, .chip.maint, .chip.opinion { color: var(--muted); }
+    .banned-ip { color: #ff6b6b; font-weight: 700; }
+    .td-actions { display: flex; gap: 6px; }
+    .mark { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 700;
+      border: 1px solid var(--line-2); color: var(--muted); margin-left: 4px; }
+    .mark.ban { color: #ff6b6b; border-color: rgba(255,107,107,.3); }
+
+    
+    .searchrow { display: flex; gap: 8px; margin: 12px 0 10px; }
+    .searchrow input[type="search"] { flex: 1; background: #111114; color: var(--text); border: 1px solid var(--line-2);
+      border-radius: 10px; padding: 11px 14px; font: inherit; font-size: 13.5px; }
+    .feedbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .fchip { padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+      border: 1px solid var(--line-2); background: transparent; color: var(--muted); font-family: inherit; }
+    .fchip:hover { border-color: var(--muted); }
+    .fchip.is-on { background: #e9e9ec; color: #101012; border-color: #e9e9ec; }
+    .fchip em { font-style: normal; opacity: .65; margin-left: 5px; font-variant-numeric: tabular-nums; }
+    .feed { max-height: 460px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; }
+    .feed table { font-size: 13px; }
+    .feed td { white-space: nowrap; }
+    .feed td.fd { white-space: normal; overflow: hidden; text-overflow: ellipsis; max-width: 260px; color: var(--muted); }
+    .feed tr.fresh td { animation: fresh 2.4s ease-out 1; }
+    @keyframes fresh { 0% { background: rgba(84,175,74,.14); } 100% { background: transparent; } }
+    .feed .t { color: var(--muted); font-size: 12px; }
+    .pagen { display: flex; gap: 6px; align-items: center; justify-content: center; margin-top: 12px; }
+    .pagen .pg { min-width: 30px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--line-2);
+      background: transparent; color: var(--muted); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+    .pagen .pg.is-on { background: #e9e9ec; color: #101012; border-color: #e9e9ec; }
+    .pagen .pg[disabled] { opacity: .4; cursor: default; }
+    .pagen .pginfo { font-size: 12px; color: var(--muted); margin: 0 6px; font-variant-numeric: tabular-nums; }
+
+    
+    .rulesbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .banrow input, .banrow select { background: var(--panel-2); color: var(--text); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 14px; }
+    .banrow .ip { width: 170px; } .banrow .rs { flex: 1; min-width: 130px; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+    .badge.ban { color: #ff6b6b; background: rgba(255,107,107,.1); border: 1px solid rgba(255,107,107,.3); }
+    .badge.lim { color: #ffd88e; background: rgba(255,216,142,.08); border: 1px solid rgba(255,216,142,.25); }
+
+    
+    .setup { border: 1px solid #5c4a26; background: #241d10; border-radius: 14px; padding: 14px 16px; margin-top: 14px; }
+    .setup h3 { margin: 0 0 6px; color: #ffd88e; font-size: 15px; }
+    .setup ol { margin: 6px 0 4px 18px; padding: 0; font-size: 13.5px; }
+    .setup li { margin: 4px 0; }
+    .cols { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; align-items: start; }
+    @media (max-width: 820px) { .cols { grid-template-columns: 1fr; } .page-head .ph-actions { width: 100%; } }
+    .hint { font-size: 12px; color: var(--muted); }
+    .saved-ok { color: var(--ok); font-weight: 700; }
+    .saved-err { color: #ff6b6b; font-weight: 700; }
+    .btn.sm { padding: 5px 10px; font-size: 12px; }
+    .danger { border-color: #3a2424; }
+    .danger .btn { border-color: #5c2626; }
+    .login-box { max-width: 380px; margin: 12vh auto 0; }
+    .login-box input { width: 100%; box-sizing: border-box; background: var(--panel-2); color: var(--text);
+      border: 1px solid var(--line-2); border-radius: 10px; padding: 12px 14px; font: inherit; font-size: 16px; }
+    .login-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .login-brand img { width: 30px; height: 30px; }
+
+    
+    #toasts { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; flex-direction: column; gap: 8px; }
+    #toasts .toast { background: var(--panel-2); border: 1px solid var(--line-2); border-left: 3px solid var(--ok);
+      border-radius: 10px; padding: 10px 14px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      animation: toastin .18s ease-out; max-width: 320px; }
+    #toasts .toast.err { border-left-color: #ff6b6b; }
+    @keyframes toastin { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .feed tr.fresh td, #toasts .toast { animation: none; } }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+
+    
+    <div class="card login-box" id="loginCard" hidden>
+      <div class="login-brand"><img src="assets/mark.png" alt="" /><h1 style="font-size:18px;margin:0">Vexora · Admin</h1></div>
+      <p class="hint" style="margin:2px 0 14px">Private panel — enter the admin password.</p>
+      <input type="password" id="adminPass" placeholder="Admin password" autocomplete="current-password" />
+      <div class="actions" style="margin-top:12px">
+        <button type="button" class="btn" id="adminGo">Sign in</button>
+      </div>
+      <p class="note" id="loginMsg"></p>
+    </div>
+
+    
+    <div id="dash" hidden>
+      <div class="pillrow" style="margin-top:18px">
+        <span class="pill ok" id="pillApp" title="Current app state"><i></i><span id="pillAppTxt">App open</span></span>
+        <span class="pill ok hide-sm" id="pillDb" title="D1 database"><i></i>DB ok</span>
+        <span class="pill hide-sm" id="pillVer">—</span>
+        <span style="flex:1"></span>
+        <button type="button" class="btn ghost sm" id="btnPause" title="Pause the 15 s auto-refresh">⏸ Live</button>
+        <button type="button" class="btn ghost sm" id="btnRefresh">Refresh</button>
+        <button type="button" class="btn ghost sm" id="btnLogout">Sign out</button>
+      </div>
+
+      
+      <div class="setup" id="setupBanner" hidden>
+        <h3>⚠ Database not connected — switches, bans and stats can't be saved yet</h3>
+        <ol>
+          <li>Dashboard → <b>Storage &amp; Databases → D1 SQL Database → Create</b> (any name, e.g. <i>vexora-stats</i>).</li>
+          <li>Project <b>vexorium → Settings → Functions → D1 database bindings → Add</b>: Variable name <b>DB</b>, select your database (Production).</li>
+          <li><b>Deploy again</b> (Create new deployment → upload the same ZIP) so the binding takes effect.</li>
+        </ol>
+        <p class="hint">The password already works (that is why you could sign in) — the database is a separate, one-time step. Until then everything stays ON and nothing is recorded.</p>
+      </div>
+
+      
+      <div class="page-head">
+        <div class="ph-txt">
+          <h1>Overview</h1>
+          <p class="ph-sub">Traffic, builds and activity · refreshes every 15 s</p>
+        </div>
+      </div>
+
+      <div class="card cap-card">
+        <div class="cap-head">
+          <h3>Today</h3>
+          <div class="cap-right"><b id="capPct">—</b><p class="hint" id="capNote">since 00:00 UTC · live</p></div>
+        </div>
+        <p class="hint cap-sub">Unique visitors against total visits — a healthy day has most visits coming back as uniques.</p>
+        <p class="cap-big"><span id="capBig">—</span> <small>uniques of <span id="capVisits2">—</span> visits</small></p>
+        <div class="cap-bar"><i id="capBar"></i></div>
+        <div class="cap-counters">
+          <span>Visits <b id="capVisits">—</b></span>
+          <span>Flashers <b id="capFlashers">—</b></span>
+          <span>Builds today <b id="capBuilds">—</b></span>
+        </div>
+        <p class="hint">Counters reset at midnight UTC. Flashes need a connected scooter — flashers counts riders, flashes counts completed writes.</p>
+      </div>
+
+      <div class="ov-grid">
+        <div class="ov-card">
+          <h4>Last 24 hours</h4>
+          <div class="ov-row"><span>Visits</span><b id="ov24v">—</b></div>
+          <div class="ov-row"><span>Unique IPs</span><b id="ov24u">—</b></div>
+          <div class="ov-row"><span>Builds + flashes</span><b id="ov24b">—</b></div>
+        </div>
+        <div class="ov-card">
+          <h4>Last 7 days</h4>
+          <div class="ov-row"><span>Visits</span><b id="ov7v">—</b></div>
+          <div class="ov-row"><span>Builds</span><b id="ov7b">—</b></div>
+        </div>
+        <div class="ov-card">
+          <h4>All time</h4>
+          <div class="ov-row"><span>Visits</span><b id="ovTv">—</b></div>
+          <div class="ov-row"><span>Builds</span><b id="ovTb">—</b></div>
+          <div class="ov-row"><span>Flashes</span><b id="ovTf">—</b></div>
+          <div class="ov-row"><span>Unique IPs</span><b id="ovTi">—</b></div>
+        </div>
+      </div>
+
+      <div class="grid" id="statGrid">
+        <div class="stat lb-1"><b id="sFlashers">—</b><span>Flashers today</span></div>
+        <div class="stat flash lb-2"><b id="sFlash">—</b><span>Flashes done</span></div>
+        <div class="stat lb-3"><b id="sTire">—</b><span>Wheel builds</span></div>
+        <div class="stat lb-3"><b id="sCfw">—</b><span>CFW builds</span></div>
+        <div class="stat lb-4"><b id="sV7">—</b><span>Visits · 7 days</span></div>
+        <div class="stat lb-4"><b id="sB7">—</b><span>Builds · 7 days</span></div>
+      </div>
+      <div class="totals">
+        All-time <span class="dot">·</span> <b id="tVisits">—</b> visits
+        <span class="dot">·</span> <b id="tBuilds">—</b> builds
+        <span class="dot">·</span> <b id="tFlashes">—</b> flashes
+        <span class="dot">·</span> <b id="tIps">—</b> IPs
+        <span class="dot">·</span> <b id="tEvents">—</b> events
+        <span class="last" id="lastFlashWrap" hidden>· last flash <b id="lastFlashTxt">—</b></span>
+      </div>
+
+      
+      <div class="card">
+        <h3 style="margin:0 0 2px">Feature switches <span class="hint" id="flagSaved"></span></h3>
+        <p class="hint" style="margin:2px 0 10px">Changes apply to every visitor within seconds. Stock restore stays available even with firmware builds off.</p>
+        <div class="row wrap">
+          <label class="sw"><input type="checkbox" id="flagTire" /><i></i><span>Wheel size tool</span></label>
+          <label class="sw"><input type="checkbox" id="flagCfw" /><i></i><span>Firmware builds (custom)</span></label>
+          <label class="sw"><input type="checkbox" id="flagVxfw" /><i></i><span>VXFW tab &mdash; replaces CFW + Motor (release switch)</span></label>
+          <label class="sw"><input type="checkbox" id="flagMaint" /><i></i><span>Maintenance mode</span></label>
+        </div>
+        <p class="hint" style="margin:10px 0 0" id="maintState"></p>
+        <div class="row wrap banrow" style="gap:8px;margin-top:10px">
+          <input type="text" id="maintReason" maxlength="140" class="rs" placeholder="Custom message on the maintenance page (optional)" />
+        </div>
+        <p class="hint" style="margin:4px 0 0">Maintenance replaces the app with a "back soon" page — only this panel stays open. Every new deploy starts in maintenance until you open it here (registered per deployment). Turning it on asks for confirmation.</p>
+        <p class="hint" style="margin:14px 0 6px;font-weight:600">STATUS WEBHOOK (Discord)</p>
+        <div class="row wrap banrow" style="gap:8px">
+          <input type="text" id="whUrl" class="rs" placeholder="https://discord.com/api/webhooks/…" autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="row wrap" style="gap:6px;margin-top:8px">
+          <button type="button" class="btn ghost sm" id="btnWhSave">Use this channel</button>
+          <button type="button" class="btn ghost sm" id="btnWhTest">Send test</button>
+          <button type="button" class="btn ghost sm" id="btnWhDel">Disable</button>
+        </div>
+        <p class="hint" id="whState" style="margin:6px 0 0"></p>
+        <p class="hint" style="margin:4px 0 0">Service status posts: maintenance starts/ends (with details) and updates. The official status channel is active by default — point it to another channel here, or disable it. For total-outage alerts deploy the companion watchdog (vexorium-watchdog/ in the package): the site cannot report its own crash.</p>
+      </div>
+
+      <div class="cols">
+        
+        <div class="card">
+          <h3 style="margin:0 0 8px">Last 7 days <span class="hint">(UTC)</span></h3>
+          <div class="chart" id="chart"></div>
+          <div class="legend"><span><i style="background:#8f8f97"></i>Visits</span><span><i style="background:#8f5a3d"></i>Builds</span></div>
+          <h3 style="margin:18px 0 6px">Top IPs · 7 days</h3>
+          <div class="tscroll">
+            <table>
+              <thead><tr><th>IP</th><th>Country</th><th>Visits</th><th>Builds</th><th>Last seen</th><th></th></tr></thead>
+              <tbody id="ipRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        
+        <div class="card">
+          <h3 style="margin:0 0 2px">Live activity</h3>
+          <p class="hint" style="margin:2px 0 0">Most recent events first · fresh rows glow for a moment.</p>
+          <div class="searchrow">
+            <input type="search" id="feedSearch" placeholder="Search IP…" autocomplete="off" />
+            <button type="button" class="btn" id="btnCsv" title="Download the loaded events as CSV">CSV</button>
+          </div>
+          <div class="feedbar">
+            <div class="chips" id="chips"></div>
+          </div>
+          <div class="feed tscroll">
+            <table>
+              <thead><tr><th>When</th><th>Type</th><th>IP</th><th>Detail</th></tr></thead>
+              <tbody id="feed"></tbody>
+            </table>
+          </div>
+          <div class="pagen">
+            <button type="button" class="pg" id="pgPrev">‹ Prev</button>
+            <span class="pginfo" id="pgInfo">—</span>
+            <button type="button" class="pg" id="pgNext">Next ›</button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card">
+        <h3 style="margin:0 0 2px">Access rules <span class="hint" id="ruleCount"></span> <span class="hint" id="ruleSaved"></span></h3>
+        <p class="hint" style="margin:2px 0 10px">Per-IP rules override the global switches. <b>Ban</b> locks the whole app for that IP — they see a "banned · contact the staff" screen instead of Vexora. Or take away / force single tools per person. "Inherit" follows the global switches.</p>
+        <div class="row wrap banrow" style="gap:8px">
+          <input type="text" id="ruleIp" class="ip" placeholder="IP (e.g. 84.12.5.66)" />
+          <input type="text" id="ruleReason" class="rs" placeholder="Reason (optional)" />
+          <label class="sw" style="white-space:nowrap"><input type="checkbox" id="ruleBanned" /><i></i><span>Ban</span></label>
+          <select id="ruleTire">
+            <option value="">Wheel: inherit</option>
+            <option value="1">Wheel: ON</option>
+            <option value="0">Wheel: OFF</option>
+          </select>
+          <select id="ruleCfw">
+            <option value="">CFW: inherit</option>
+            <option value="1">CFW: ON</option>
+            <option value="0">CFW: OFF</option>
+          </select>
+          <button type="button" class="btn sm" id="btnRuleSave">Save rule</button>
+        </div>
+        <div class="rulesbar" style="margin-top:10px" id="ruleSearchWrap" hidden>
+          <input type="search" id="ruleSearch" placeholder="Filter rules…" autocomplete="off" />
+        </div>
+        <div id="ruleList" style="margin-top:6px"></div>
+      </div>
+
+      
+      <div class="card">
+        <h3 style="margin:0 0 4px">Support desk <span class="hint" id="svState"></span></h3>
+        <p class="hint" style="margin:0 0 10px">Live view of the support chat: queue, active conversations, ratings and complaints. Purge removes CLOSED chats older than the selected days (messages and ratings included) — the full LOGS CSV export stays available in the support console.</p>
+        <div class="row wrap" style="gap:18px;margin:4px 0 10px">
+          <span>Waiting <b id="svWait">—</b></span>
+          <span>Active <b id="svAct">—</b></span>
+          <span>Closed <b id="svClosed">—</b></span>
+          <span>Avg stars <b id="svAvg">—</b></span>
+          <span>Complaints (&le;2&#9733;) <b id="svBad">—</b></span>
+          <span>Top agent <b id="svTop">—</b></span>
+        </div>
+        <div class="row wrap">
+          <button type="button" class="btn ghost sm" id="btnSvReload">Reload</button>
+          <button type="button" class="btn ghost sm" id="btnSvPurge7">Purge closed &gt; 7 days</button>
+          <button type="button" class="btn ghost sm" id="btnSvPurge30">Purge closed &gt; 30 days</button>
+          <button type="button" class="btn ghost sm" id="btnSvPurge90">Purge closed &gt; 90 days</button>
+        </div>
+        <p class="note" id="svMsg"></p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 4px">Rider accounts <span class="hint" id="ridState"></span></h3>
+        <p class="hint" style="margin:0 0 10px">Registered riders: total, verified and banned. Delete removes the account, its messages, blocks and reports immediately (GDPR erasure). Ban closes all sessions.</p>
+        <div class="row wrap" style="gap:18px;margin:4px 0 10px">
+          <span>Total <b id="ridTotal">—</b></span>
+          <span>Verified <b id="ridVerified">—</b></span>
+          <span>Banned <b id="ridBanned">—</b></span>
+        </div>
+        <div class="row wrap banrow" style="gap:8px;margin-bottom:10px">
+          <input type="text" id="ridQ" class="ip" placeholder="Search name or email" />
+          <button type="button" class="btn ghost sm" id="btnRidFind">Search</button>
+          <button type="button" class="btn ghost sm" id="btnRidReload">Reload</button>
+        </div>
+        <div class="tscroll">
+          <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Verified</th><th>Status</th><th>Created</th><th>Last seen</th><th></th></tr></thead>
+            <tbody id="ridRows"><tr><td class="hint">—</td></tr></tbody>
+          </table>
+        </div>
+        <p class="note" id="ridCodes" hidden></p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 4px">Rider reports <span class="hint" id="ridRepState"></span></h3>
+        <p class="hint" style="margin:0 0 10px">Reports from the community chat with reason, details and an AI severity note (0 benign · 3 critical). Ban or delete the reported account right from here.</p>
+        <div class="tscroll">
+          <table>
+            <thead><tr><th>When</th><th>Target</th><th>By</th><th>Reason · detail</th><th>AI</th><th></th></tr></thead>
+            <tbody id="ridRepRows"><tr><td class="hint">—</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 4px">Community posts <span class="hint" id="commState"></span></h3>
+        <p class="hint" style="margin:0 0 10px">Photos published in the community app (newest 60). Deleting removes the photo from storage too. Permanent until deleted by the author or you.</p>
+        <div class="tscroll">
+          <table>
+            <thead><tr><th>When</th><th>By</th><th>Caption</th><th>&#9829;</th><th>&#128172;</th><th></th></tr></thead>
+            <tbody id="commRows"><tr><td class="hint">—</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card danger">
+        <h3 style="margin:0 0 4px">Events</h3>
+        <p class="hint" style="margin:0 0 10px">Events auto-delete after 90 days. Deleting is immediate and cannot be undone.</p>
+        <div class="row wrap">
+          <button type="button" class="btn ghost sm" id="btnPurgeOld">Delete older than 90 days</button>
+          <button type="button" class="btn ghost sm" id="btnPurgeAll">Delete ALL events</button>
+        </div>
+        <p class="note" id="purgeMsg"></p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 4px">Feedback <span class="hint" id="fbCount"></span></h3>
+        <p class="hint" style="margin:0 0 10px">"Rate the app" submissions: country, device, scooter model, connection, rating and message. Newest first (last 500). Kept until you delete them.</p>
+        <div class="row wrap">
+          <button type="button" class="btn ghost sm" id="btnFbReload">Reload</button>
+          <button type="button" class="btn ghost sm" id="btnFbClear">Delete ALL feedback</button>
+        </div>
+        <div style="max-height:420px;overflow:auto;margin-top:10px">
+          <table style="width:100%;border-collapse:collapse;font-size:12px" id="fbTable"><tr><td class="hint">—</td></tr></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts"></div>
+
+  <script>
+(function() {
+  var $ = function(s) {
+    return document.querySelector(s);
+  };
+  var TOKEN_KEY = "vexora.adminToken";
+  var token = null;
+  try {
+    token = localStorage.getItem(TOKEN_KEY) || null;
+  } catch (e) {}
+  var timer = null;
+  var paused = false;
+  function toast(msg, isErr) {
+    var box = $("#toasts");
+    if (!box) return;
+    var el = document.createElement("div");
+    el.className = "toast" + (isErr ? " err" : "");
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(function() {
+      el.style.transition = "opacity .3s";
+      el.style.opacity = "0";
+      setTimeout(function() {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 320);
+    }, 3200);
+  }
+  function api(path, opts) {
+    opts = opts || {};
+    opts.headers = Object.assign({
+      "Content-Type": "application/json"
+    }, token ? {
+      Authorization: "Bearer " + token
+    } : {}, opts.headers || {});
+    return fetch(path, opts).then(function(r) {
+      return r.json().catch(function() {
+        return null;
+      }).then(function(j) {
+        return {
+          status: r.status,
+          body: j
+        };
+      });
+    });
+  }
+  function showLogin(msg) {
+    $("#dash").hidden = true;
+    $("#loginCard").hidden = false;
+    if (msg) $("#loginMsg").textContent = msg;
+  }
+  function tryLogin() {
+    var pwd = $("#adminPass").value;
+    $("#loginMsg").textContent = "";
+    api("/admin/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        password: pwd
+      })
+    }).then(function(r) {
+      if (r.status === 200 && r.body && r.body.ok && r.body.token) {
+        token = r.body.token;
+        try {
+          localStorage.setItem(TOKEN_KEY, token);
+        } catch (e) {}
+        enterDash();
+      } else {
+        $("#loginMsg").textContent = r.body && r.body.error || "Login failed (" + r.status + ")";
+      }
+    }).catch(function() {
+      $("#loginMsg").textContent = "Network error";
+    });
+  }
+  $("#adminGo").addEventListener("click", tryLogin);
+  $("#adminPass").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") tryLogin();
+  });
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[c];
+    });
+  }
+  function fmtTime(ts) {
+    var d = new Date(Number(ts));
+    return d.toISOString().replace("T", " ").slice(5, 16) + " UTC";
+  }
+  function relTime(ts) {
+    var s = Math.max(0, Math.floor((Date.now() - Number(ts)) / 1e3));
+    if (s < 45) return "just now";
+    if (s < 3600) return Math.floor(s / 60) + "m ago";
+    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+    if (s < 7 * 86400) return Math.floor(s / 86400) + "d ago";
+    return fmtTime(ts);
+  }
+  function enterDash() {
+    $("#loginCard").hidden = true;
+    $("#dash").hidden = false;
+    loadVersion();
+    loadFlags();
+    loadStats();
+    loadRules();
+    loadFeedback();
+    try {
+      loadRiders("");
+      loadRiderCodes();
+      loadRidReports();
+      loadComm();
+    } catch (e) {}
+    if (timer) clearInterval(timer);
+    timer = setInterval(function() {
+      try {
+        if (document.querySelector("#svWait")) loadSupport();
+      } catch (e) {}
+      try {
+        if (document.querySelector("#ridTotal")) {
+          loadRiders(($("#ridQ") || {}).value || "");
+          loadRiderCodes();
+        }
+      } catch (e) {}
+      try {
+        if (document.querySelector("#ridRepRows")) loadRidReports();
+        if (document.querySelector("#commRows")) loadComm();
+      } catch (e) {}
+      if (paused) return;
+      loadFlags();
+      loadStats();
+      loadRules();
+      loadFeedback();
+    }, 15e3);
+  }
+  function loadVersion() {
+    fetch("/api/health").then(function(r) {
+      return r.json();
+    }).then(function(j) {
+      if (j && j.ok) $("#pillVer").textContent = "v" + (j.app || "?");
+    }).catch(function() {});
+  }
+  var dbOk = null;
+  function setDb(ok) {
+    if (dbOk === null) dbOk = ok; else dbOk = dbOk && ok;
+    $("#setupBanner").hidden = dbOk !== false;
+    var p = $("#pillDb");
+    p.className = "pill " + (dbOk === false ? "err hide-sm" : "ok hide-sm");
+    p.innerHTML = "<i></i>" + (dbOk === false ? "DB off" : "DB ok");
+  }
+  function paintMaintState(on) {
+    var pill = $("#pillApp"), txt = $("#pillAppTxt"), st = $("#maintState");
+    pill.className = "pill " + (on ? "warn" : "ok");
+    txt.textContent = on ? "Maintenance" : "App open";
+    st.textContent = on ? "Maintenance is ON — visitors see the back-soon page. Switch it off to open the app." : "The app is OPEN — everyone can use it.";
+  }
+  function loadFlags() {
+    api("/admin/api/flags").then(function(r) {
+      if (r.status === 401) {
+        logout();
+        return;
+      }
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      setDb(r.body.db !== false);
+      $("#flagTire").checked = !!r.body.flags.tire;
+      $("#flagCfw").checked = !!r.body.flags.cfw;
+      $("#flagVxfw").checked = !!r.body.flags.vxfw;
+      $("#flagMaint").checked = !!r.body.flags.maint;
+      var mr = $("#maintReason");
+      if (mr && document.activeElement !== mr) mr.value = r.body.flags.maintReason || "";
+      paintMaintState(!!r.body.flags.maint);
+    }).catch(function() {});
+  }
+  function saveFlags() {
+    var note = $("#flagSaved");
+    note.className = "hint";
+    note.textContent = "· saving…";
+    api("/admin/api/flags", {
+      method: "POST",
+      body: JSON.stringify({
+        flags: {
+          tire: $("#flagTire").checked,
+          cfw: $("#flagCfw").checked,
+          vxfw: $("#flagVxfw") ? $("#flagVxfw").checked : undefined,
+          maint: $("#flagMaint").checked,
+          maintReason: $("#maintReason") ? $("#maintReason").value : undefined
+        }
+      })
+    }).then(function(r) {
+      if (r.status === 401) {
+        logout();
+        return;
+      }
+      if (r.status === 200 && r.body && r.body.ok) {
+        note.className = "hint saved-ok";
+        note.textContent = "· saved ✓";
+        toast("Switches saved ✓");
+        setTimeout(function() {
+          note.textContent = "";
+        }, 2500);
+      } else {
+        note.className = "hint saved-err";
+        note.textContent = "· " + (r.body && r.body.error || "save failed (" + r.status + ")");
+        toast("Could not save switches", true);
+        setTimeout(loadFlags, 800);
+      }
+    }).catch(function() {
+      note.className = "hint saved-err";
+      note.textContent = "· network error";
+      toast("Network error", true);
+    });
+  }
+  $("#flagTire").addEventListener("change", saveFlags);
+  var fv = $("#flagVxfw");
+  if (fv) fv.addEventListener("change", saveFlags);
+  $("#flagCfw").addEventListener("change", saveFlags);
+  if ($("#maintReason")) $("#maintReason").addEventListener("change", saveFlags);
+  $("#flagMaint").addEventListener("change", function() {
+    if (this.checked && !window.confirm("Turn maintenance ON? Everyone will see the maintenance page until you turn it off from here.")) {
+      this.checked = false;
+      return;
+    }
+    saveFlags();
+  });
+  function whPaint(r) {
+    var el = $("#whState");
+    if (!el) return;
+    if (!r || !r.configured) {
+      el.textContent = "Status channel disabled.";
+      return;
+    }
+    el.textContent = (r.source === "custom" ? "Custom status channel active: " : "Official status channel active: ") + (r.masked || "");
+  }
+  function whLoad() {
+    api("/admin/api/webhook").then(function(r) {
+      if (r.status === 200 && r.body) whPaint(r.body);
+    }).catch(function() {});
+  }
+  whLoad();
+  if ($("#btnWhSave")) $("#btnWhSave").addEventListener("click", function() {
+    var u = ($("#whUrl").value || "").trim();
+    if (!u) return;
+    api("/admin/api/webhook", {
+      method: "POST",
+      body: JSON.stringify({
+        url: u
+      })
+    }).then(function(r) {
+      if (r.body && r.body.ok) {
+        $("#whUrl").value = "";
+        whLoad();
+        toast("Webhook saved ✓");
+      } else {
+        $("#whState").textContent = r.body && r.body.error || "Save failed (" + r.status + ")";
+        toast("Could not save webhook", true);
+      }
+    }).catch(function() {
+      $("#whState").textContent = "Network error";
+    });
+  });
+  if ($("#btnWhTest")) $("#btnWhTest").addEventListener("click", function() {
+    $("#whState").textContent = "Sending test…";
+    api("/admin/api/webhook/test", {
+      method: "POST"
+    }).then(function(r) {
+      if (r.body && r.body.ok) {
+        $("#whState").textContent = "Test delivered ✓ (HTTP " + r.body.status + ") — check the channel";
+        toast("Test sent ✓");
+      } else {
+        $("#whState").textContent = "Test failed: " + (r.body && (r.body.error || "HTTP " + r.body.status) || "network error");
+        toast("Test failed", true);
+      }
+    }).catch(function() {
+      $("#whState").textContent = "Network error";
+    });
+  });
+  if ($("#btnWhDel")) $("#btnWhDel").addEventListener("click", function() {
+    api("/admin/api/webhook", {
+      method: "DELETE"
+    }).then(function(r) {
+      if (r.body && r.body.ok) {
+        whPaint({
+          configured: false
+        });
+        toast("Status channel disabled");
+      } else toast("Could not remove", true);
+    }).catch(function() {});
+  });
+  var lastRules = [];
+  function fmtTool(v) {
+    return v === 1 ? "ON" : v === 0 ? "OFF" : "inherit";
+  }
+  function loadRules() {
+    api("/admin/api/rules").then(function(r) {
+      if (r.status === 401) {
+        logout();
+        return;
+      }
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      setDb(r.body.db !== false);
+      lastRules = r.body.rules || [];
+      $("#ruleCount").textContent = lastRules.length ? "· " + lastRules.length + " active" : "";
+      $("#ruleSearchWrap").hidden = lastRules.length < 3;
+      renderRules();
+    }).catch(function() {});
+  }
+  function renderRules() {
+    var q = ($("#ruleSearch") && $("#ruleSearch").value || "").trim().toLowerCase();
+    var rows = lastRules.filter(function(b) {
+      return !q || String(b.ip).toLowerCase().indexOf(q) >= 0 || String(b.reason || "").toLowerCase().indexOf(q) >= 0;
+    });
+    $("#ruleList").innerHTML = rows.length ? "<div class='tscroll'><table><thead><tr><th>IP</th><th>Status</th><th>Wheel</th><th>CFW</th><th>Reason</th><th>Since</th><th></th></tr></thead><tbody>" + rows.map(function(b) {
+      var st = b.banned ? "<span class='badge ban'>Banned</span>" : "<span class='badge lim'>Limited</span>";
+      return "<tr><td>" + esc(b.ip) + "</td><td>" + st + "</td><td>" + fmtTool(b.tire) + "</td><td>" + fmtTool(b.cfw) + "</td><td>" + esc(b.reason || "—") + '</td><td title="' + esc(fmtTime(b.ts)) + '">' + esc(relTime(b.ts)) + "</td>" + "<td><div class='td-actions'><button type='button' class='btn ghost sm act-copy' data-ip=\"" + esc(b.ip) + "\" title='Copy IP'>⧉</button> <button type='button' class='btn ghost sm act-edit' data-ip=\"" + esc(b.ip) + "\">Edit</button> <button type='button' class='btn ghost sm act-del' data-ip=\"" + esc(b.ip) + '">Delete</button></div></td></tr>';
+    }).join("") + "</tbody></table></div>" : lastRules.length ? "<p class='hint'>No rules match your filter.</p>" : "<p class='hint'>No rules yet. Bans and per-person limits will appear here.</p>";
+  }
+  if ($("#ruleSearch")) $("#ruleSearch").addEventListener("input", renderRules);
+  function ruleNote(txt, isErr) {
+    var el = $("#ruleSaved");
+    el.className = "hint" + (isErr ? " saved-err" : " saved-ok");
+    el.textContent = "· " + txt;
+    setTimeout(function() {
+      el.textContent = "";
+    }, 4e3);
+  }
+  function fillRuleForm(b) {
+    $("#ruleIp").value = b.ip || "";
+    $("#ruleReason").value = b.reason || "";
+    $("#ruleBanned").checked = !!b.banned;
+    $("#ruleTire").value = b.tire === 1 ? "1" : b.tire === 0 ? "0" : "";
+    $("#ruleCfw").value = b.cfw === 1 ? "1" : b.cfw === 0 ? "0" : "";
+  }
+  $("#btnRuleSave").addEventListener("click", function() {
+    var ip = $("#ruleIp").value.trim();
+    if (!ip) {
+      ruleNote("enter an IP first", true);
+      toast("Enter an IP first", true);
+      return;
+    }
+    var body = {
+      ip: ip,
+      reason: $("#ruleReason").value.trim(),
+      banned: $("#ruleBanned").checked
+    };
+    if ($("#ruleTire").value !== "") body.tire = Number($("#ruleTire").value);
+    if ($("#ruleCfw").value !== "") body.cfw = Number($("#ruleCfw").value);
+    api("/admin/api/rules", {
+      method: "POST",
+      body: JSON.stringify(body)
+    }).then(function(r) {
+      if (r.status === 200 && r.body && r.body.ok) {
+        ruleNote("saved ✓");
+        toast("Rule saved ✓");
+        loadRules();
+        loadStats();
+      } else {
+        ruleNote(r.body && r.body.error || "failed (" + r.status + ")", true);
+        toast("Could not save the rule", true);
+      }
+    }).catch(function() {
+      ruleNote("network error", true);
+      toast("Network error", true);
+    });
+  });
+  function copyIp(ip) {
+    var done = function(ok) {
+      toast(ok ? "IP copied: " + ip : "Could not copy", !ok);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ip).then(function() {
+          done(true);
+        }, function() {
+          done(false);
+        });
+        return;
+      }
+    } catch (e) {}
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = ip;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      done(true);
+    } catch (e) {
+      done(false);
+    }
+  }
+  document.addEventListener("click", function(e) {
+    var t = e.target.closest ? e.target.closest("button") : null;
+    if (!t) return;
+    var ip = t.getAttribute("data-ip");
+    if (t.classList.contains("act-copy")) {
+      copyIp(ip);
+      return;
+    }
+    if (t.classList.contains("act-del") || t.classList.contains("act-unban-row")) {
+      api("/admin/api/rules?ip=" + encodeURIComponent(ip), {
+        method: "DELETE"
+      }).then(function() {
+        ruleNote("deleted ✓");
+        toast("Rule deleted ✓");
+        loadRules();
+        loadStats();
+      }).catch(function() {
+        ruleNote("network error", true);
+        toast("Network error", true);
+      });
+    } else if (t.classList.contains("act-ban")) {
+      api("/admin/api/rules", {
+        method: "POST",
+        body: JSON.stringify({
+          ip: ip,
+          banned: true,
+          reason: "from stats"
+        })
+      }).then(function() {
+        ruleNote("banned ✓");
+        toast("Banned " + ip + " ✓");
+        loadRules();
+        loadStats();
+      }).catch(function() {
+        ruleNote("network error", true);
+        toast("Network error", true);
+      });
+    } else if (t.classList.contains("act-edit") || t.classList.contains("act-limit")) {
+      var hit = lastRules.filter(function(b) {
+        return b.ip === ip;
+      })[0];
+      fillRuleForm(hit || {
+        ip: ip
+      });
+      try {
+        $("#ruleIp").scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      } catch (err) {}
+    }
+  });
+  var TYPES = {
+    visit: "visit",
+    admin_visit: "admin",
+    admin_login: "login",
+    tire_build: "wheel",
+    cfw_build: "cfw",
+    flash: "flash",
+    feedback: "opinion",
+    ban_add: "ban",
+    ban_remove: "unban",
+    rule_set: "rule",
+    maint: "maint"
+  };
+  var lastRecent = [];
+  var seenKeys = {};
+  var feedType = "all";
+  var feedPage = 0;
+  var FEED_PAGE = 40;
+  function feedKey(e) {
+    return e.ts + "|" + e.type + "|" + e.ip;
+  }
+  function feedFiltered() {
+    var q = ($("#feedSearch") && $("#feedSearch").value || "").trim().toLowerCase();
+    return lastRecent.filter(function(e) {
+      if (feedType !== "all" && e.type !== feedType) return false;
+      if (q && String(e.ip).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+  function renderChips() {
+    var counts = {};
+    lastRecent.forEach(function(e) {
+      counts[e.type] = (counts[e.type] || 0) + 1;
+    });
+    var defs = [ [ "all", "All", lastRecent.length ], [ "visit", "Visits" ], [ "tire_build", "Wheel" ], [ "cfw_build", "CFW" ], [ "flash", "Flash" ], [ "ban_add", "Bans" ], [ "opinion", "Feedback" ] ];
+    var html = "";
+    defs.forEach(function(d) {
+      var n = d[0] === "all" ? d[2] : counts[d[0]] || 0;
+      if (d[0] !== "all" && !n) return;
+      html += "<button type='button' class='fchip" + (feedType === d[0] ? " is-on" : "") + "' data-ft='" + d[0] + "'>" + d[1] + "<em>" + n + "</em></button>";
+    });
+    $("#chips").innerHTML = html;
+  }
+  function renderFeed() {
+    var rows = feedFiltered();
+    var pages = Math.max(1, Math.ceil(rows.length / FEED_PAGE));
+    if (feedPage >= pages) feedPage = pages - 1;
+    if (feedPage < 0) feedPage = 0;
+    var slice = rows.slice(feedPage * FEED_PAGE, feedPage * FEED_PAGE + FEED_PAGE);
+    $("#feed").innerHTML = slice.length ? slice.map(function(e) {
+      return '<tr class="' + (seenKeys[feedKey(e)] ? "" : "fresh") + '" data-type="' + esc(e.type) + '" data-ip="' + esc(e.ip) + '">' + '<td class="t" title="' + esc(fmtTime(e.ts)) + '">' + esc(relTime(e.ts)) + "</td>" + '<td><span class="chip ' + esc(e.type) + '">' + esc(TYPES[e.type] || e.type) + "</span></td>" + "<td>" + esc(e.ip) + (e.country ? " <span class='mark'>" + esc(e.country) + "</span>" : "") + "</td>" + '<td class="fd">' + esc([ e.model, e.version, e.detail ].filter(Boolean).join(" · ")) + "</td></tr>";
+    }).join("") : "";
+    $("#pgInfo").textContent = rows.length ? "page " + (feedPage + 1) + " / " + pages + " · " + rows.length + " events" : "0 events — nothing matches";
+    $("#pgPrev").disabled = feedPage <= 0;
+    $("#pgNext").disabled = feedPage >= pages - 1;
+    lastRecent.forEach(function(e) {
+      seenKeys[feedKey(e)] = 1;
+    });
+  }
+  if ($("#feedSearch")) $("#feedSearch").addEventListener("input", function() {
+    feedPage = 0;
+    renderFeed();
+  });
+  $("#pgPrev").addEventListener("click", function() {
+    feedPage--;
+    renderFeed();
+  });
+  $("#pgNext").addEventListener("click", function() {
+    feedPage++;
+    renderFeed();
+  });
+  $("#chips").addEventListener("click", function(e) {
+    var b = e.target.closest ? e.target.closest(".fchip") : null;
+    if (!b) return;
+    feedType = b.getAttribute("data-ft") || "all";
+    feedPage = 0;
+    renderChips();
+    renderFeed();
+  });
+  $("#btnCsv").addEventListener("click", function() {
+    try {
+      var head = "time,type,ip,country,model,version,detail";
+      var lines = lastRecent.map(function(e) {
+        return [ new Date(Number(e.ts)).toISOString(), e.type, e.ip, e.country, e.model, e.version, e.detail ].map(function(v) {
+          return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+        }).join(",");
+      });
+      var blob = new Blob([ head + "\n" + lines.join("\n") ], {
+        type: "text/csv"
+      });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "vexora-activity.csv";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+        URL.revokeObjectURL(a.href);
+        document.body.removeChild(a);
+      }, 400);
+      toast("CSV downloaded ✓");
+    } catch (err) {
+      toast("Could not build the CSV", true);
+    }
+  });
+  function fbFlag(cc) {
+    cc = String(cc || "").toUpperCase();
+    if (!/^[A-Z]{2}$/.test(cc)) return "🏳️";
+    return String.fromCodePoint.apply(null, cc.split("").map(function(c) {
+      return 127397 + c.charCodeAt(0);
+    }));
+  }
+  function fbDevice(ua) {
+    ua = String(ua || "");
+    var os = /Android/i.test(ua) ? "Android" : /iPhone|iPad|iPod/i.test(ua) ? "iOS" : /Macintosh/i.test(ua) ? "Mac" : /Windows/i.test(ua) ? "Windows" : /Linux/i.test(ua) ? "Linux" : "?";
+    var br = /Edg\//i.test(ua) ? "Edge" : /OPR\//i.test(ua) ? "Opera" : /Chrome\//i.test(ua) ? "Chrome" : /Safari\//i.test(ua) ? "Safari" : /Firefox\//i.test(ua) ? "Firefox" : "?";
+    return os + " · " + br;
+  }
+  function esc(s2) {
+    return String(s2 == null ? "" : s2).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function loadFeedback() {
+    api("/admin/api/feedback/list").then(function(r) {
+      var rows = r && r.body && r.body.rows || [];
+      var el = $("#fbTable");
+      if (!el) return;
+      $("#fbCount").textContent = rows.length ? rows.length + " loaded (max 500)" : "";
+      el.innerHTML = rows.length ? rows.map(function(f) {
+        var d = new Date(f.ts || 0);
+        return '<tr><td style="padding:8px 8px 12px 0;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top">' + "<b>" + fbFlag(f.country) + " " + esc(f.country || "??") + "</b> · " + esc(fbDevice(f.ua)) + " · 🛴 <b>" + esc((f.model || "?").toUpperCase()) + "</b> (" + esc(f.how || "?") + (f.fw && f.fw !== "--" ? " · fw " + esc(f.fw) : "") + ")" + " · " + "★".repeat(Math.max(0, Math.min(5, f.rating || 0))) + "<br><span class='hint'>" + esc(d.toISOString().slice(0, 16).replace("T", " ")) + " UTC · " + esc(f.lang || "?") + " · app " + esc(f.app || "?") + " · ip " + esc(f.ip || "") + "</span>" + (f.msg ? "<br>" + esc(f.msg) : "") + "</td></tr>";
+      }).join("") : "<tr><td class='hint'>No feedback yet</td></tr>";
+    }).catch(function() {});
+  }
+  $("#btnFbReload").addEventListener("click", loadFeedback);
+  $("#btnFbClear").addEventListener("click", function() {
+    if (!confirm("Delete ALL feedback? This cannot be undone.")) return;
+    api("/admin/api/feedback", {
+      method: "DELETE"
+    }).then(function() {
+      loadFeedback();
+    });
+  });
+  function loadSupport() {
+    api("/admin/api/support/overview").then(function(d) {
+      if (!d || !d.ok) return;
+      $("#svWait").textContent = d.waiting;
+      $("#svAct").textContent = d.active;
+      $("#svClosed").textContent = d.closed;
+      $("#svAvg").textContent = d.avg == null ? "—" : d.avg + "★ (" + d.rated + ")";
+      $("#svBad").textContent = d.complaints;
+      $("#svTop").textContent = d.top ? d.top.name + " · " + d.top.avg + "★ (" + d.top.chats + ")" : "—";
+      $("#svState").textContent = "live";
+    }).catch(function() {
+      $("#svState").textContent = "";
+    });
+  }
+  function purgeSupport(days) {
+    if (!window.confirm("Delete CLOSED support chats older than " + days + " days? This cannot be undone.")) return;
+    api("/admin/api/support/purge", {
+      method: "POST",
+      body: {
+        days: days
+      }
+    }).then(function(d) {
+      $("#svMsg").textContent = d && d.ok ? "Purged " + d.deleted + " closed chats older than " + d.days + " days." : d && d.error ? d.error : "Purge failed";
+      loadSupport();
+    }).catch(function() {
+      $("#svMsg").textContent = "Purge failed";
+    });
+  }
+  $("#btnSvReload").addEventListener("click", loadSupport);
+  $("#btnSvPurge7").addEventListener("click", function() {
+    purgeSupport(7);
+  });
+  $("#btnSvPurge30").addEventListener("click", function() {
+    purgeSupport(30);
+  });
+  $("#btnSvPurge90").addEventListener("click", function() {
+    purgeSupport(90);
+  });
+  function loadStats() {
+    api("/admin/api/stats").then(function(r) {
+      if (r.status === 401) {
+        logout();
+        return;
+      }
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      var s = r.body;
+      setDb(s.db !== false);
+      $("#sFlashers").textContent = s.flashersToday;
+      $("#sTire").textContent = s.tireToday;
+      $("#sCfw").textContent = s.cfwToday;
+      $("#sFlash").textContent = s.flashToday;
+      $("#sV7").textContent = s.visits7;
+      $("#sB7").textContent = s.builds7;
+      var T = s.totals || {};
+      $("#tVisits").textContent = T.visits != null ? T.visits : "—";
+      $("#tBuilds").textContent = T.builds != null ? T.builds : "—";
+      $("#tFlashes").textContent = T.flashes != null ? T.flashes : "—";
+      $("#tIps").textContent = T.uniqIps != null ? T.uniqIps : "—";
+      $("#tEvents").textContent = T.events != null ? T.events : "—";
+      if (s.lastFlash && s.lastFlash.ts) {
+        $("#lastFlashWrap").hidden = false;
+        $("#lastFlashTxt").textContent = relTime(s.lastFlash.ts) + (s.lastFlash.ip ? " · " + s.lastFlash.ip : "");
+      }
+      var v = Number(s.visitsToday) || 0, u = Number(s.uniquesToday) || 0;
+      var pct = v > 0 ? Math.min(100, Math.round(u / v * 100)) : 0;
+      $("#capBig").textContent = u;
+      $("#capVisits").textContent = v;
+      $("#capVisits2").textContent = v;
+      $("#capFlashers").textContent = s.flashersToday;
+      $("#capBuilds").textContent = (Number(s.tireToday) || 0) + (Number(s.cfwToday) || 0);
+      $("#capPct").textContent = pct + "% unique";
+      $("#capBar").style.width = pct + "%";
+      $("#ov24v").textContent = v;
+      $("#ov24u").textContent = u;
+      $("#ov24b").textContent = (Number(s.tireToday) || 0) + (Number(s.cfwToday) || 0) + (Number(s.flashToday) || 0);
+      $("#ov7v").textContent = s.visits7;
+      $("#ov7b").textContent = s.builds7;
+      $("#ovTv").textContent = T.visits != null ? T.visits : "—";
+      $("#ovTb").textContent = T.builds != null ? T.builds : "—";
+      $("#ovTf").textContent = T.flashes != null ? T.flashes : "—";
+      $("#ovTi").textContent = T.uniqIps != null ? T.uniqIps : "—";
+      var maxV = 1;
+      (s.days || []).forEach(function(d) {
+        maxV = Math.max(maxV, d.visits, d.builds);
+      });
+      $("#chart").innerHTML = (s.days || []).map(function(d) {
+        var hv = Math.round(d.visits / maxV * 100), hb = Math.round(d.builds / maxV * 100);
+        return '<div class="col"><div class="num">' + (d.visits || "") + "</div>" + '<div class="bar v" style="height:' + hv + '%" title="' + d.visits + ' visits"></div>' + '<div class="bar b" style="height:' + hb + '%" title="' + d.builds + ' builds"></div>' + "<span>" + esc(d.day.slice(5)) + "</span></div>";
+      }).join("");
+      $("#ipRows").innerHTML = (s.topIps || []).length ? s.topIps.map(function(t) {
+        var marks = [];
+        if (t.banned) marks.push("<span class='mark ban'>banned</span>");
+        if (t.tire === 0) marks.push("<span class='mark'>wheel off</span>");
+        if (t.tire === 1) marks.push("<span class='mark'>wheel on</span>");
+        if (t.cfw === 0) marks.push("<span class='mark'>cfw off</span>");
+        if (t.cfw === 1) marks.push("<span class='mark'>cfw on</span>");
+        var ipCell = "<td>" + esc(t.ip) + (marks.length ? " " + marks.join(" ") : "") + "</td>";
+        var btn = (t.banned ? "<button type='button' class='btn ghost sm act-unban-row' data-ip=\"" + esc(t.ip) + '">Unban</button> ' : "<button type='button' class='btn ghost sm act-ban' data-ip=\"" + esc(t.ip) + '">Ban</button> ') + "<button type='button' class='btn ghost sm act-limit' data-ip=\"" + esc(t.ip) + '">Limit</button>';
+        return "<tr>" + ipCell + "<td>" + esc(t.country || "—") + "</td><td>" + t.visits + "</td><td>" + t.builds + '</td><td title="' + esc(fmtTime(t.last)) + '">' + esc(relTime(t.last)) + "</td><td><div class='td-actions'>" + btn + "</div></td></tr>";
+      }).join("") : "<tr><td colspan='6' class='hint'>No events yet</td></tr>";
+      lastRecent = s.recent || [];
+      renderChips();
+      renderFeed();
+    }).catch(function() {});
+  }
+  $("#btnRefresh").addEventListener("click", function() {
+    loadStats();
+    loadFlags();
+    loadRules();
+  });
+  $("#btnPause").addEventListener("click", function() {
+    paused = !paused;
+    this.textContent = paused ? "▶ Paused" : "⏸ Live";
+    this.classList.toggle("is-on", paused);
+    toast(paused ? "Auto-refresh paused" : "Auto-refresh resumed");
+  });
+  function purge(scope) {
+    if (scope === "all" && !confirm("Delete ALL events? This cannot be undone.")) return;
+    $("#purgeMsg").textContent = "Working…";
+    api("/admin/api/events?scope=" + scope, {
+      method: "DELETE"
+    }).then(function(r) {
+      var okd = r.status === 200 && r.body && r.body.ok;
+      $("#purgeMsg").textContent = okd ? "✓ Deleted" : r.body && r.body.error || "Failed (" + r.status + ")";
+      toast(okd ? "Events deleted ✓" : "Could not delete events", !okd);
+      loadStats();
+    }).catch(function() {
+      $("#purgeMsg").textContent = "Network error";
+      toast("Network error", true);
+    });
+  }
+  $("#btnPurgeOld").addEventListener("click", function() {
+    purge("old");
+  });
+  $("#btnPurgeAll").addEventListener("click", function() {
+    purge("all");
+  });
+  var ridTimerOn = false;
+  function loadRiders(q) {
+    api("/admin/api/riders" + (q ? "?q=" + encodeURIComponent(q) : "")).then(function(r) {
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      var rows = r.body.rows || [];
+      $("#ridTotal").textContent = r.body.total;
+      $("#ridVerified").textContent = r.body.verified;
+      $("#ridBanned").textContent = r.body.banned;
+      $("#ridRows").innerHTML = rows.length ? rows.map(function(u) {
+        return "<tr><td><b>" + esc(u.name_disp) + "</b></td><td>" + esc(u.mail) + "</td><td>" + (u.verified ? "✓" : "—") + "</td><td>" + (u.banned ? "<span class='badge ban'>Banned</span>" : "<span class='badge lim'>Active</span>") + "</td><td>" + esc(relTime(u.created)) + "</td><td>" + esc(relTime(u.last)) + "</td>" + "<td><div class='td-actions'><button type='button' class='btn ghost sm rid-ban' data-name='" + esc(u.name) + "' data-on='" + (u.banned ? "0" : "1") + "'>" + (u.banned ? "Unban" : "Ban") + "</button> <button type='button' class='btn ghost sm rid-del' data-name='" + esc(u.name) + "'>Delete</button></div></td></tr>";
+      }).join("") : "<tr><td colspan='7' class='hint'>No rider accounts yet</td></tr>";
+      $("#ridState").textContent = "live";
+    }).catch(function() {
+      $("#ridState").textContent = "";
+    });
+  }
+  function loadRiderCodes() {
+    api("/admin/api/riders/codes").then(function(r) {
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      var el = $("#ridCodes");
+      if (!el) return;
+      var rows = r.body.rows || [];
+      if (!r.body.stub) {
+        el.hidden = true;
+        return;
+      }
+      el.hidden = rows.length === 0;
+      el.textContent = rows.length ? "Email not configured (RESEND_API_KEY missing) — pending codes: " + rows.map(function(c) {
+        return "@" + c.name + " → " + c.code + " (" + c.kind + ")";
+      }).join(" · ") : "";
+    }).catch(function() {});
+  }
+  function loadComm() {
+    api("/admin/api/comm/list").then(function(r) {
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      var rows = r.body.rows || [];
+      $("#commRows").innerHTML = rows.length ? rows.map(function(x) {
+        return "<tr><td>" + esc(relTime(x.ts)) + "</td><td>" + (x.name ? "<b>@" + esc(x.name) + "</b>" : "<span class='hint'>deleted rider</span>") + "</td><td>" + esc(x.cap || "—") + "</td><td>" + (Number(x.likes) || 0) + "</td><td>" + (Number(x.cmts) || 0) + "</td>" + "<td><div class='td-actions'><button type='button' class='btn ghost sm comm-del' data-id='" + x.id + "'>Delete</button></div></td></tr>";
+      }).join("") : "<tr><td colspan='6' class='hint'>No community posts</td></tr>";
+      $("#commState").textContent = "live";
+    }).catch(function() {
+      $("#commState").textContent = "";
+    });
+  }
+  var WHY_LABEL = {
+    spam: "Spam/scam",
+    harass: "Harassment",
+    illegal: "Illegal content",
+    impersonation: "Impersonation",
+    other: "Other"
+  };
+  function loadRidReports() {
+    api("/admin/api/riders/reports").then(function(r) {
+      if (r.status !== 200 || !r.body || !r.body.ok) return;
+      var rows = r.body.rows || [];
+      $("#ridRepRows").innerHTML = rows.length ? rows.map(function(x) {
+        var parts = String(x.why || "").split(" | ");
+        var lbl = WHY_LABEL[parts[0]] || parts[0] || "—";
+        var sev = Number(x.severity) || 0;
+        var sevTxt = x.ai ? "<span class='badge " + (sev >= 3 ? "ban" : sev === 2 ? "lim" : "") + "'>" + sev + "/3 · " + esc(x.ai) + "</span>" : "<span class='hint'>…</span>";
+        return "<tr><td>" + esc(relTime(x.ts)) + "</td><td><b>@" + esc(x.target) + "</b>" + (x.tbanned ? " <span class='badge ban'>Banned</span>" : "") + "</td><td>" + esc(x.reporter || "—") + "</td><td>" + esc(lbl) + (parts[1] ? "<br><span class='hint'>" + esc(parts[1]) + "</span>" : "") + "</td><td>" + sevTxt + "</td>" + "<td><div class='td-actions'><button type='button' class='btn ghost sm rid-ban' data-name='" + esc(x.target) + "' data-on='" + (x.tbanned ? "0" : "1") + "'>" + (x.tbanned ? "Unban" : "Ban") + "</button> <button type='button' class='btn ghost sm rid-del' data-name='" + esc(x.target) + "'>Delete</button> <button type='button' class='btn ghost sm rid-dis' data-id='" + x.id + "'>Dismiss</button></div></td></tr>";
+      }).join("") : "<tr><td colspan='6' class='hint'>No reports</td></tr>";
+      $("#ridRepState").textContent = "live";
+    }).catch(function() {
+      $("#ridRepState").textContent = "";
+    });
+  }
+  if ($("#btnRidFind")) $("#btnRidFind").addEventListener("click", function() {
+    loadRiders(($("#ridQ") || {}).value || "");
+  });
+  if ($("#btnRidReload")) $("#btnRidReload").addEventListener("click", function() {
+    loadRiders(($("#ridQ") || {}).value || "");
+    loadRiderCodes();
+  });
+  document.addEventListener("click", function(e) {
+    var t = e.target.closest ? e.target.closest("button") : null;
+    if (!t) return;
+    var nm = t.getAttribute("data-name");
+    if (!nm) return;
+    if (t.classList.contains("rid-ban")) {
+      api("/admin/api/riders/ban", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nm,
+          banned: t.getAttribute("data-on") === "1"
+        })
+      }).then(function() {
+        loadRiders(($("#ridQ") || {}).value || "");
+      });
+    } else if (t.classList.contains("rid-del")) {
+      if (!confirm("Delete @" + nm + " and ALL their data? GDPR erasure — cannot be undone.")) return;
+      api("/admin/api/riders?name=" + encodeURIComponent(nm), {
+        method: "DELETE"
+      }).then(function() {
+        loadRiders(($("#ridQ") || {}).value || "");
+        loadRiderCodes();
+        loadRidReports();
+      });
+    } else if (t.classList.contains("rid-dis")) {
+      api("/admin/api/riders/reports/dismiss", {
+        method: "POST",
+        body: JSON.stringify({
+          id: Number(t.getAttribute("data-id")) || 0
+        })
+      }).then(function() {
+        loadRidReports();
+      });
+    } else if (t.classList.contains("comm-del")) {
+      if (!confirm("Delete this community post and its photo from storage? Cannot be undone.")) return;
+      api("/admin/api/comm/delete", {
+        method: "POST",
+        body: JSON.stringify({
+          id: Number(t.getAttribute("data-id")) || 0
+        })
+      }).then(function() {
+        loadComm();
+      });
+    }
+  });
+  function logout() {
+    token = null;
+    try {
+      localStorage.removeItem(TOKEN_KEY);
+    } catch (e) {}
+    if (timer) clearInterval(timer);
+    showLogin("Signed out.");
+  }
+  $("#btnLogout").addEventListener("click", logout);
+  if (token) {
+    api("/admin/api/flags").then(function(r) {
+      if (r.status === 200) enterDash(); else showLogin(r.status === 503 ? "Admin not configured — set ADMIN_PASSWORD in the Pages project." : "");
+    }).catch(function() {
+      showLogin("");
+    });
+  } else {
+    showLogin("");
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Vexora · cabeceras para Cloudflare (Pages y Workers static assets)
+# Reglas de seguridad heredadas de netlify.toml
+
+/*
+  Permissions-Policy: bluetooth=(self)
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+
+# Entradas HTML y PWA: revalidar siempre para que las actualizaciones
+# (bump de ?v=160x) lleguen al instante.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/landing.html
+  Cache-Control: public, max-age=0, must-revalidate
+/app
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/cfw/
+  Cache-Control: public, max-age=0, must-revalidate
+/cfw/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/forge/
+  Cache-Control: public, max-age=0, must-revalidate
+/forge/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+/sw.js
+  Cache-Control: no-cache, must-revalidate
+/support
+  Cache-Control: public, max-age=0, must-revalidate
+/support.html
+  Cache-Control: public, max-age=0, must-revalidate
+/manifest.webmanifest
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Fuentes con hash en el nombre de contenido y sin cambios previstos: caché 1 año
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Panel de administración: fuera de buscadores
+/admin
+  X-Robots-Tag: noindex, nofollow
+/admin.html
+  X-Robots-Tag: noindex, nofollow
