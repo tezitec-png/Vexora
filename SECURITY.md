@@ -6,7 +6,7 @@ Vexora is **archived**. No security patches will be released for this repository
 
 ## Reporting
 
-Historical contact: **login.vexora@gmail.com** (project founder). The original Discord server is no longer under the founder's control — do **not** report vulnerabilities through Discord.
+Historical contact: **tezitec@gmail.com** (project founder). The original Discord server is no longer under the founder's control — do **not** report vulnerabilities through Discord.
 
 ## Security design notes (for fork maintainers)
 
