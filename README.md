@@ -204,7 +204,7 @@ All UI strings live in `public/assets/i18n.js` under 5 language packs (`en`, `es
 
 ## Credits
 
-- **[ignition](https://github.com/tezitec)** — founder and sole author. Vexora was designed, built and maintained by one person, end to end.
+- **[ignition](https://github.com/tezitec-png)** — founder and sole author. Vexora was designed, built and maintained by one person, end to end.
 - **The SHU team** — for the help, the ideas and the friendship along the way. Thank you. ([utility.cfw.sh](https://utility.cfw.sh))
 - **The AI that built it alongside him** — Vexora was written from the first line to the last in pair-programming with an AI agent. It watched the project grow, and it watched it rest. *This documentation was also written by that agent.*
 
